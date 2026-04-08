@@ -91,7 +91,6 @@
         input, select { background-color: var(--input-bg); border: 1px solid #555; color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 0.95rem; width: 100%;}
         input:focus, select:focus { outline: none; border-color: var(--accent-blue); }
         
-        /* جعل الخيار الافتراضي المعطل يظهر بلون باهت قليلاً */
         select option[disabled] { color: var(--text-muted); }
 
         .btn-group { display: flex; gap: 10px; margin-top: 15px; grid-column: 1 / -1; }
@@ -283,7 +282,6 @@
     </div>
 
     <script>
-        // --- الساعة والتاريخ ---
         function updateClock() {
             const now = new Date();
             document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-US', { hour12: true });
@@ -292,7 +290,6 @@
         }
         setInterval(updateClock, 1000);
 
-        // --- تسجيل الدخول ---
         function attemptLogin() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
@@ -315,7 +312,6 @@
             }
         }
 
-        // --- التنقل بين الصفحات ---
         window.switchTab = function(tabName) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -331,7 +327,6 @@
         }
 
         const ADMIN_PASSWORD = "1234";
-
         const defaultProducts = ["Empagliflozin (NP)", "Empagliflozin +met(NP)", "Linagliptin (NP)", "Semaglutide (UD)", "Tamsulosin (NP)"];
         const defaultMilestones = [
             "Collecting all registration documents along with the CPP",
@@ -431,13 +426,10 @@
             applyLanguage();
         }
 
-        // --- Configuration Logic ---
         function renderConfig() {
             const selP = document.getElementById('productName');
             const selM = document.getElementById('milestone');
             const selS = document.getElementById('mainStatus');
-            
-            // إضافة الخيار الافتراضي الفارغ (يمنع الحفظ دونه)
             const t = translations[currentLang];
             selP.innerHTML = `<option value="" disabled selected>${t.sel_product}</option>`;
             selM.innerHTML = `<option value="" disabled selected>${t.sel_milestone}</option>`;
@@ -450,7 +442,6 @@
             const listP = document.getElementById('productsList');
             const listM = document.getElementById('milestonesList');
             const listS = document.getElementById('statusList');
-            
             listP.innerHTML = ''; listM.innerHTML = ''; listS.innerHTML = '';
             confProducts.forEach((p, i) => listP.innerHTML += `<li>${translateItem(p)} <button class="action-btn btn-delete" onclick="deleteConfig('products', ${i})">✖</button></li>`);
             confMilestones.forEach((m, i) => listM.innerHTML += `<li>${translateItem(m)} <button class="action-btn btn-delete" onclick="deleteConfig('milestones', ${i})">✖</button></li>`);
@@ -498,26 +489,21 @@
         window.deleteConfig = function(type, index) {
             let targetArr = type === 'products' ? confProducts : (type === 'milestones' ? confMilestones : confStatus);
             let itemToDelete = targetArr[index];
-
             if (isConfigUsedInRecords(type, itemToDelete)) {
                 alert(translations[currentLang].err_used);
                 return;
             }
-
             let userPwd = prompt(translations[currentLang].prompt_pwd);
             if (userPwd === null) return; 
-            
             if (userPwd !== ADMIN_PASSWORD) {
                 alert(translations[currentLang].err_pwd);
                 return;
             }
-
             targetArr.splice(index, 1);
             saveConfigStorage();
             renderConfig();
         }
 
-        // --- Main Tracker Logic ---
         function checkDateOverlap(product, newStart, newEnd) {
             const start = new Date(newStart); const end = new Date(newEnd);
             return milestonesData.some(item => {
@@ -532,7 +518,6 @@
             if (isCompleted) return { text: t.status_completed, class: 'bg-completed' };
             const today = new Date(); today.setHours(0,0,0,0);
             const start = new Date(startDate); const end = new Date(endDate);
-
             if (today < start) return { text: t.status_notstarted, class: 'bg-notstarted' };
             if (today > end) return { text: t.status_delayed, class: 'bg-delayed' };
             return { text: t.status_progress, class: 'bg-progress' };
@@ -546,7 +531,6 @@
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
 
-            // حماية إضافية للخيارات الفارغة
             if(!product || !milestoneVal || !mainStatusVal) return alert(currentLang === 'ar' ? "الرجاء اختيار بيانات صحيحة من القوائم" : "Please select valid options from dropdowns");
 
             const isDuplicateMilestone = milestonesData.some(item => 
@@ -567,8 +551,6 @@
                 mainStatus: mainStatusVal, startDate: start, endDate: end, isCompleted: false
             });
             saveData();
-            
-            // تفريغ النموذج بالكامل (يعيد القوائم للافتراضي الفارغ ويمسح التواريخ)
             this.reset();
         });
 
@@ -602,14 +584,10 @@
             const trackerCard = document.getElementById('visualTrackerCard');
             const trackerTitle = document.getElementById('trackerTitle');
             const stepperContainer = document.getElementById('stepperContainer');
-            
             trackerCard.style.display = 'block';
             trackerTitle.innerText = `${currentLang==='ar'?'مسار إنجاز الدواء:':'Product Track:'} ${translateItem(productName)}`;
-            
             const productRecords = milestonesData.filter(item => item.productName === productName);
-            
             let htmlContent = '';
-            
             confMilestones.forEach((stageName, idx) => {
                 const record = productRecords.find(r => r.milestone === stageName);
                 let stepClass = '', iconContent = idx + 1;
@@ -619,7 +597,6 @@
                 }
                 htmlContent += `<div class="step ${stepClass}"><div class="step-icon">${iconContent}</div><div class="step-label">${translateItem(stageName)}</div></div>`;
             });
-            
             const lineDir = currentLang === 'ar' ? 'right: 8.33%;' : 'left: 8.33%;';
             htmlContent = `<div class="progress-line" style="${lineDir} width: 83.33%; opacity:0.3; background: #4a4a5a"></div>` + htmlContent;
             stepperContainer.innerHTML = htmlContent;
@@ -630,7 +607,6 @@
             const table = document.getElementById("dataTable");
             const tr = table.getElementsByTagName("tr");
             const inputs = document.querySelectorAll('.filter-input');
-
             for (let i = 1; i < tr.length; i++) {
                 let rowVisible = true;
                 for(let j = 0; j < inputs.length; j++) {
@@ -655,7 +631,6 @@
             if (milestonesData.length === 0) return;
             let csvContent = "\uFEFFProduct,Milestone,Main Status,Start Date,End Date\n";
             if(currentLang === 'ar') csvContent = "\uFEFFاسم الصنف,المرحلة,الحالة,البداية,النهاية\n";
-            
             milestonesData.forEach(item => {
                 csvContent += `"${translateItem(item.productName)}","${translateItem(item.milestone)}","${translateItem(item.mainStatus)}","${item.startDate}","${item.endDate}"\n`;
             });
@@ -665,32 +640,27 @@
             link.click();
         };
 
-        // Init
         applyLanguage();
         document.getElementById('appScreen').style.display = 'none';
     </script>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyB-zo20b1z6NXYY4V74qZJmQ_bVQmuYVYY",
-    authDomain: "rm02-46fc9.firebaseapp.com",
-    projectId: "rm02-46fc9",
-    storageBucket: "rm02-46fc9.firebasestorage.app",
-    messagingSenderId: "794360720321",
-    appId: "1:794360720321:web:358b473c52347fe66e5d40",
-    measurementId: "G-PDB9VKXDZH"
-  };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-zo20b1z6NXYY4V74qZJmQ_bVQmuYVYY",
+            authDomain: "rm02-46fc9.firebaseapp.com",
+            projectId: "rm02-46fc9",
+            storageBucket: "rm02-46fc9.firebasestorage.app",
+            messagingSenderId: "794360720321",
+            appId: "1:794360720321:web:358b473c52347fe66e5d40",
+            measurementId: "G-PDB9VKXDZH"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        console.log("Firebase Initialized Successfully");
+    </script>
 </body>
 </html>
