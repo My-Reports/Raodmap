@@ -91,6 +91,7 @@
         input, select { background-color: var(--input-bg); border: 1px solid #555; color: var(--text-main); padding: 10px; border-radius: 6px; font-size: 0.95rem; width: 100%;}
         input:focus, select:focus { outline: none; border-color: var(--accent-blue); }
         
+        /* جعل الخيار الافتراضي المعطل يظهر بلون باهت قليلاً */
         select option[disabled] { color: var(--text-muted); }
 
         .btn-group { display: flex; gap: 10px; margin-top: 15px; grid-column: 1 / -1; }
@@ -281,7 +282,27 @@
         </main>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-zo20b1z6NXYY4V74qZJmQ_bVQmuYVYY",
+            authDomain: "rm02-46fc9.firebaseapp.com",
+            projectId: "rm02-46fc9",
+            storageBucket: "rm02-46fc9.firebasestorage.app",
+            messagingSenderId: "794360720321",
+            appId: "1:794360720321:web:358b473c52347fe66e5d40",
+            measurementId: "G-PDB9VKXDZH"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const globalDocRef = doc(db, "pharma_erp", "global_data");
+
+        // --- الساعة والتاريخ ---
         function updateClock() {
             const now = new Date();
             document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('en-US', { hour12: true });
@@ -290,7 +311,8 @@
         }
         setInterval(updateClock, 1000);
 
-        function attemptLogin() {
+        // --- تسجيل الدخول ---
+        window.attemptLogin = function() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
             if(u === 'admin' && p === '1234') {
@@ -302,7 +324,7 @@
             }
         }
 
-        function logout() {
+        window.logout = function() {
             if(confirm(currentLang === 'ar' ? 'هل أنت متأكد من تسجيل الخروج؟' : 'Are you sure you want to logout?')) {
                 document.getElementById('appScreen').style.display = 'none';
                 document.getElementById('loginScreen').style.display = 'flex';
@@ -312,6 +334,7 @@
             }
         }
 
+        // --- التنقل بين الصفحات ---
         window.switchTab = function(tabName) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -327,6 +350,7 @@
         }
 
         const ADMIN_PASSWORD = "1234";
+
         const defaultProducts = ["Empagliflozin (NP)", "Empagliflozin +met(NP)", "Linagliptin (NP)", "Semaglutide (UD)", "Tamsulosin (NP)"];
         const defaultMilestones = [
             "Collecting all registration documents along with the CPP",
@@ -340,14 +364,38 @@
 
         function sortArray(arr) { return arr.sort((a,b) => a.localeCompare(b)); }
 
-        let milestonesData = JSON.parse(localStorage.getItem('pharmaData')) || [];
-        let confProducts = sortArray(JSON.parse(localStorage.getItem('confProducts')) || defaultProducts);
-        let confMilestones = sortArray(JSON.parse(localStorage.getItem('confMilestones')) || defaultMilestones);
-        let confStatus = sortArray(JSON.parse(localStorage.getItem('confStatus')) || defaultStatus);
+        let milestonesData = [];
+        let confProducts = [...defaultProducts];
+        let confMilestones = [...defaultMilestones];
+        let confStatus = [...defaultStatus];
+        let currentTrackedProduct = null;
 
-        confProducts = confProducts.filter(item => item !== '-' && item.trim() !== '');
-        confMilestones = confMilestones.filter(item => item !== '-' && item.trim() !== '');
-        confStatus = confStatus.filter(item => item !== '-' && item.trim() !== '');
+        // Firebase Realtime Sync Listener
+        onSnapshot(globalDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                milestonesData = data.milestonesData || [];
+                confProducts = data.confProducts || sortArray([...defaultProducts]);
+                confMilestones = data.confMilestones || sortArray([...defaultMilestones]);
+                confStatus = data.confStatus || sortArray([...defaultStatus]);
+            } else {
+                // Initial creation if the document doesn't exist
+                setDoc(globalDocRef, {
+                    milestonesData: milestonesData,
+                    confProducts: confProducts,
+                    confMilestones: confMilestones,
+                    confStatus: confStatus
+                });
+            }
+            
+            renderConfig();
+            renderTable();
+
+            // Re-draw visual tracker if open during a real-time sync
+            if (currentTrackedProduct && document.getElementById('visualTrackerCard').style.display === 'block') {
+                window.drawVisualTracker(currentTrackedProduct);
+            }
+        });
 
         const translationDict = {
             "Identifying Supplier": "تحديد المورد",
@@ -420,16 +468,18 @@
             updateClock();
         }
 
-        function toggleLanguage() {
+        window.toggleLanguage = function() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
             localStorage.setItem('pharmaLang', currentLang);
             applyLanguage();
         }
 
+        // --- Configuration Logic ---
         function renderConfig() {
             const selP = document.getElementById('productName');
             const selM = document.getElementById('milestone');
             const selS = document.getElementById('mainStatus');
+            
             const t = translations[currentLang];
             selP.innerHTML = `<option value="" disabled selected>${t.sel_product}</option>`;
             selM.innerHTML = `<option value="" disabled selected>${t.sel_milestone}</option>`;
@@ -442,6 +492,7 @@
             const listP = document.getElementById('productsList');
             const listM = document.getElementById('milestonesList');
             const listS = document.getElementById('statusList');
+            
             listP.innerHTML = ''; listM.innerHTML = ''; listS.innerHTML = '';
             confProducts.forEach((p, i) => listP.innerHTML += `<li>${translateItem(p)} <button class="action-btn btn-delete" onclick="deleteConfig('products', ${i})">✖</button></li>`);
             confMilestones.forEach((m, i) => listM.innerHTML += `<li>${translateItem(m)} <button class="action-btn btn-delete" onclick="deleteConfig('milestones', ${i})">✖</button></li>`);
@@ -449,12 +500,15 @@
         }
 
         function saveConfigStorage() {
-            confProducts = sortArray(confProducts);
-            confMilestones = sortArray(confMilestones);
-            confStatus = sortArray(confStatus);
-            localStorage.setItem('confProducts', JSON.stringify(confProducts));
-            localStorage.setItem('confMilestones', JSON.stringify(confMilestones));
-            localStorage.setItem('confStatus', JSON.stringify(confStatus));
+            confProducts = sortArray(confProducts.filter(item => item !== '-' && item.trim() !== ''));
+            confMilestones = sortArray(confMilestones.filter(item => item !== '-' && item.trim() !== ''));
+            confStatus = sortArray(confStatus.filter(item => item !== '-' && item.trim() !== ''));
+            
+            setDoc(globalDocRef, {
+                confProducts: confProducts,
+                confMilestones: confMilestones,
+                confStatus: confStatus
+            }, { merge: true }).catch(err => console.error("Firebase Sync Error: ", err));
         }
 
         window.addConfig = function(type) {
@@ -474,7 +528,6 @@
             targetArr.push(val);
             saveConfigStorage();
             input.value = '';
-            renderConfig();
         }
 
         function isConfigUsedInRecords(type, itemValue) {
@@ -489,21 +542,25 @@
         window.deleteConfig = function(type, index) {
             let targetArr = type === 'products' ? confProducts : (type === 'milestones' ? confMilestones : confStatus);
             let itemToDelete = targetArr[index];
+
             if (isConfigUsedInRecords(type, itemToDelete)) {
                 alert(translations[currentLang].err_used);
                 return;
             }
+
             let userPwd = prompt(translations[currentLang].prompt_pwd);
             if (userPwd === null) return; 
+            
             if (userPwd !== ADMIN_PASSWORD) {
                 alert(translations[currentLang].err_pwd);
                 return;
             }
+
             targetArr.splice(index, 1);
             saveConfigStorage();
-            renderConfig();
         }
 
+        // --- Main Tracker Logic ---
         function checkDateOverlap(product, newStart, newEnd) {
             const start = new Date(newStart); const end = new Date(newEnd);
             return milestonesData.some(item => {
@@ -518,6 +575,7 @@
             if (isCompleted) return { text: t.status_completed, class: 'bg-completed' };
             const today = new Date(); today.setHours(0,0,0,0);
             const start = new Date(startDate); const end = new Date(endDate);
+
             if (today < start) return { text: t.status_notstarted, class: 'bg-notstarted' };
             if (today > end) return { text: t.status_delayed, class: 'bg-delayed' };
             return { text: t.status_progress, class: 'bg-progress' };
@@ -581,13 +639,18 @@
         }
 
         window.drawVisualTracker = function(productName) {
+            currentTrackedProduct = productName;
             const trackerCard = document.getElementById('visualTrackerCard');
             const trackerTitle = document.getElementById('trackerTitle');
             const stepperContainer = document.getElementById('stepperContainer');
+            
             trackerCard.style.display = 'block';
             trackerTitle.innerText = `${currentLang==='ar'?'مسار إنجاز الدواء:':'Product Track:'} ${translateItem(productName)}`;
+            
             const productRecords = milestonesData.filter(item => item.productName === productName);
+            
             let htmlContent = '';
+            
             confMilestones.forEach((stageName, idx) => {
                 const record = productRecords.find(r => r.milestone === stageName);
                 let stepClass = '', iconContent = idx + 1;
@@ -597,6 +660,7 @@
                 }
                 htmlContent += `<div class="step ${stepClass}"><div class="step-icon">${iconContent}</div><div class="step-label">${translateItem(stageName)}</div></div>`;
             });
+            
             const lineDir = currentLang === 'ar' ? 'right: 8.33%;' : 'left: 8.33%;';
             htmlContent = `<div class="progress-line" style="${lineDir} width: 83.33%; opacity:0.3; background: #4a4a5a"></div>` + htmlContent;
             stepperContainer.innerHTML = htmlContent;
@@ -607,6 +671,7 @@
             const table = document.getElementById("dataTable");
             const tr = table.getElementsByTagName("tr");
             const inputs = document.querySelectorAll('.filter-input');
+
             for (let i = 1; i < tr.length; i++) {
                 let rowVisible = true;
                 for(let j = 0; j < inputs.length; j++) {
@@ -622,15 +687,26 @@
             }
         };
 
-        function saveData() { localStorage.setItem('pharmaData', JSON.stringify(milestonesData)); renderTable(); }
+        function saveData() { 
+            setDoc(globalDocRef, { milestonesData: milestonesData }, { merge: true })
+                .catch(err => console.error("Firebase Sync Error: ", err));
+        }
+
         window.markCompleted = function(index) { milestonesData[index].isCompleted = true; saveData(); };
         window.deleteItem = function(index) { if(confirm(translations[currentLang].msg_delete)) { milestonesData.splice(index, 1); saveData(); } };
-        window.clearAllData = function() { if(confirm(currentLang === 'ar' ? 'مسح كل البيانات؟' : 'Clear all data?')) { milestonesData = []; saveData(); document.getElementById('visualTrackerCard').style.display='none';} };
+        window.clearAllData = function() { 
+            if(confirm(currentLang === 'ar' ? 'مسح كل البيانات؟' : 'Clear all data?')) { 
+                milestonesData = []; 
+                saveData(); 
+                document.getElementById('visualTrackerCard').style.display='none';
+            } 
+        };
 
         window.exportToExcel = function() {
             if (milestonesData.length === 0) return;
             let csvContent = "\uFEFFProduct,Milestone,Main Status,Start Date,End Date\n";
             if(currentLang === 'ar') csvContent = "\uFEFFاسم الصنف,المرحلة,الحالة,البداية,النهاية\n";
+            
             milestonesData.forEach(item => {
                 csvContent += `"${translateItem(item.productName)}","${translateItem(item.milestone)}","${translateItem(item.mainStatus)}","${item.startDate}","${item.endDate}"\n`;
             });
@@ -640,27 +716,9 @@
             link.click();
         };
 
+        // Init
         applyLanguage();
         document.getElementById('appScreen').style.display = 'none';
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyB-zo20b1z6NXYY4V74qZJmQ_bVQmuYVYY",
-            authDomain: "rm02-46fc9.firebaseapp.com",
-            projectId: "rm02-46fc9",
-            storageBucket: "rm02-46fc9.firebasestorage.app",
-            messagingSenderId: "794360720321",
-            appId: "1:794360720321:web:358b473c52347fe66e5d40",
-            measurementId: "G-PDB9VKXDZH"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        console.log("Firebase Initialized Successfully");
     </script>
 </body>
 </html>
