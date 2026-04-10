@@ -366,7 +366,7 @@
 
             <div id="view-followup" class="container view-section">
                 <div class="card" style="margin-bottom: 20px;">
-                    <div style="display: justify-content: space-between; align-items: flex-start;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <h3 data-i18n="followup_title" style="color: var(--accent-blue); margin-top:0;">شاشة المتابعة والتحديث الفعلي (Actuals vs Forecast)</h3>
                             <p data-i18n="followup_desc" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0;">استخدم هذه الشاشة لتحديث التواريخ. سيتم احتساب حالة التنفيذ أوتوماتيكياً بناءً على البيانات.</p>
@@ -453,10 +453,10 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-        // Firebase Config (Untouched)
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyB-zo20b1z6NXYY4V74qZJmQ_bVQmuYVYY",
             authDomain: "rm02-46fc9.firebaseapp.com",
@@ -472,10 +472,10 @@
 
         // --- Utils & State ---
         let milestonesData = [], confProducts = [], confSkus = [], confSuppliers = [], confMilestones = [], confStatus = [];
-        let currentTrackedProduct = null;
         let chartStatusInstance=null, chartBrandsInstance=null, chartBottleneckInstance=null, chartSupplierInstance=null;
 
-        function sortArray(arr) { return arr.sort((a,b) => a.localeCompare(b)); }
+        // FIXED: Taking a copy of the array before sorting to avoid Firebase read-only errors
+        function sortArray(arr) { return [...arr].sort((a,b) => a.localeCompare(b)); }
 
         function updateClock() {
             const now = new Date();
@@ -643,11 +643,15 @@
             }
         }
         
+        // FIXED: Replaced "eval" with safe dynamic variable referencing
         window.deleteConfig = (type, idx) => {
-            const arrName = 'conf'+type.charAt(0).toUpperCase()+type.slice(1);
+            const map = { products: confProducts, skus: confSkus, suppliers: confSuppliers, milestones: confMilestones, status: confStatus };
+            const arrName = 'conf' + type.charAt(0).toUpperCase() + type.slice(1);
+            const targetArray = map[type];
+            
             if(confirm(translations[currentLang].msg_confirm_del)) { 
-                eval(`${arrName}.splice(${idx}, 1)`); 
-                setDoc(globalDocRef, {[arrName]: eval(arrName)}, {merge:true}); 
+                targetArray.splice(idx, 1); 
+                setDoc(globalDocRef, {[arrName]: targetArray}, {merge:true}); 
             }
         }
 
