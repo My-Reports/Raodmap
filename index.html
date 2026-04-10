@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharma Milestones ERP</title>
+    <title>Salutem Milestones ERP</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
@@ -27,22 +27,52 @@
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-gradient); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; }
 
-        /* ================= شاشة تسجيل الدخول ================= */
+        /* ================= شاشة الترحيب ================= */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), 
                         url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop') center/cover;
             display: flex; justify-content: center; align-items: center; z-index: 9999;
+            overflow: hidden;
         }
-        .datetime-widget { position: absolute; top: 20px; left: 30px; text-align: left; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        
+        /* اللوجو العائم في الخلفية بحركة محسنة */
+        .floating-logo {
+            position: absolute;
+            width: 450px;
+            max-width: 85vw;
+            z-index: 1;
+            pointer-events: none;
+            animation: floatLogoBeautiful 8s ease-in-out infinite;
+        }
+        
+        @keyframes floatLogoBeautiful {
+            0% { 
+                transform: translate(0, 0) rotate(-2deg) scale(1); 
+                opacity: 0.15; 
+                filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+            }
+            50% { 
+                transform: translate(0, -35px) rotate(3deg) scale(1.05); 
+                opacity: 0.35; 
+                filter: drop-shadow(0 20px 30px rgba(6, 182, 212, 0.6));
+            }
+            100% { 
+                transform: translate(0, 0) rotate(-2deg) scale(1); 
+                opacity: 0.15; 
+                filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+            }
+        }
+
+        .datetime-widget { position: absolute; top: 20px; left: 30px; text-align: left; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 10;}
         .time-display { font-size: 2.5rem; font-weight: bold; color: var(--accent-blue); letter-spacing: 2px;}
         .date-display { font-size: 1.1rem; color: var(--text-muted); }
-        .login-card { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(20px); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 400px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .login-card h1 { font-size: 2.2rem; margin-bottom: 10px; color: var(--accent-blue); }
-        .login-input { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #334155; background: rgba(0,0,0,0.3); color: white; font-size: 1rem; transition: 0.3s; }
-        .login-input:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 10px rgba(6, 182, 212, 0.3); }
-        .login-btn { width: 100%; padding: 15px; border-radius: 8px; border: none; font-size: 1.1rem; font-weight: bold; background: linear-gradient(90deg, #06b6d4, #3b82f6); color: white; cursor: pointer; transition: 0.3s; }
-        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(6, 182, 212, 0.4); }
+        
+        .login-card { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(20px); padding: 50px 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); z-index: 10; position: relative;}
+        .login-card h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--accent-blue); text-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);}
+        
+        .login-btn { width: 100%; padding: 15px; border-radius: 8px; border: none; font-size: 1.2rem; font-weight: bold; background: linear-gradient(90deg, #06b6d4, #3b82f6); color: white; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px;}
+        .login-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(6, 182, 212, 0.5); }
 
         /* ================= القائمة الجانبية ================= */
         #appScreen { display: none; height: 100vh; width: 100vw; flex-direction: column;}
@@ -220,17 +250,19 @@
     </div>
 
     <div id="loginScreen">
+        <img src="salutem.png" class="floating-logo" alt="Salutem Logo Background">
+        
         <div class="datetime-widget">
             <div class="time-display" id="clockDisplay">--:--:--</div>
             <div class="date-display" id="dateDisplay">--</div>
         </div>
         <div class="login-card">
-            <h1>Pharma Roadmap</h1>
-            <p style="color: var(--text-muted); margin-bottom: 25px;">نظام إدارة وتتبع معالم الأصناف الدوائية</p>
-            <input type="text" id="loginUser" class="login-input" placeholder="اسم المستخدم (Username)">
-            <input type="password" id="loginPass" class="login-input" placeholder="كلمة المرور (Password)">
-            <button class="login-btn" onclick="attemptLogin()">تسجيل الدخول</button>
-            <p id="loginError" style="color: var(--status-delayed); margin-top: 15px; display: none;">بيانات الدخول غير صحيحة!</p>
+            <h1>Salutem Roadmap</h1>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 1.1rem;">نظام إدارة وتتبع معالم الأصناف الدوائية</p>
+            
+            <button class="login-btn continue-btn" onclick="enterApp()">
+                متابعة (Continue) <span style="font-size:1.4rem;">➔</span>
+            </button>
         </div>
     </div>
 
@@ -240,15 +272,15 @@
         <aside class="sidebar" id="sidebar">
             <button class="close-sidebar" onclick="toggleSidebar()">✖</button>
             <div class="sidebar-header">
-                <h2>Roadmap ERP</h2>
+                <h2>Salutem Roadmap</h2>
                 <span style="color: #64748b; font-size: 0.8rem; letter-spacing: 1px;">Pharma Tracker</span>
             </div>
             <nav class="nav-links">
-                <button class="nav-btn active" onclick="switchTab('tracker')" id="nav-tracker" data-i18n="tab_tracker">📝 الخطة الأساسية (Forecast)</button>
+                <button class="nav-btn" onclick="switchTab('tracker')" id="nav-tracker" data-i18n="tab_tracker">📝 الخطة الأساسية (Forecast)</button>
                 <button class="nav-btn" onclick="switchTab('followup')" id="nav-followup" data-i18n="tab_followup">🔄 المتابعة الفعلية (Actuals)</button>
-                <button class="nav-btn" onclick="switchTab('reports')" id="nav-reports" data-i18n="tab_reports">📊 لوحات القياس (Dashboards)</button>
+                <button class="nav-btn active" onclick="switchTab('reports')" id="nav-reports" data-i18n="tab_reports">📊 لوحات القياس (Dashboards)</button>
                 <button class="nav-btn" onclick="switchTab('config')" id="nav-config" data-i18n="tab_config">⚙️ الإعدادات (Config)</button>
-                <button class="nav-btn logout-btn" onclick="logout()" data-i18n="btn_logout">🚪 تسجيل الخروج</button>
+                <button class="nav-btn logout-btn" onclick="logout()" data-i18n="btn_logout">🏠 العودة للرئيسية</button>
             </nav>
         </aside>
 
@@ -256,7 +288,7 @@
             <header class="topbar">
                 <div class="topbar-left">
                     <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-                    <h3 id="pageTitle" style="color: var(--text-main); margin: 0; font-weight: 600;">شاشة إدخال الخطة (Forecast Data Entry)</h3>
+                    <h3 id="pageTitle" style="color: var(--text-main); margin: 0; font-weight: 600;">لوحات القياس والتقارير (Dashboards & Reports)</h3>
                 </div>
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <span id="welcomeUserText" style="font-weight: bold; color: var(--accent-blue);">مرحباً</span>
@@ -264,11 +296,11 @@
                 </div>
             </header>
 
-            <div id="view-tracker" class="container view-section active">
+            <div id="view-tracker" class="container view-section">
                 <div class="card">
                     <form id="trackerForm" class="form-grid">
                         <div class="form-group">
-                            <label data-i18n="lbl_product">اسم العلامة التجارية (Brand Name)</label>
+                            <label data-i18n="lbl_product">العلامة التجارية (Brand Name)</label>
                             <select id="productName" required></select>
                         </div>
                         <div class="form-group">
@@ -334,7 +366,7 @@
 
             <div id="view-followup" class="container view-section">
                 <div class="card" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="display: justify-content: space-between; align-items: flex-start;">
                         <div>
                             <h3 data-i18n="followup_title" style="color: var(--accent-blue); margin-top:0;">شاشة المتابعة والتحديث الفعلي (Actuals vs Forecast)</h3>
                             <p data-i18n="followup_desc" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0;">استخدم هذه الشاشة لتحديث التواريخ. سيتم احتساب حالة التنفيذ أوتوماتيكياً بناءً على البيانات.</p>
@@ -363,7 +395,7 @@
                 </div>
             </div>
 
-            <div id="view-reports" class="container view-section">
+            <div id="view-reports" class="container view-section active">
                 <div class="dash-summary">
                     <div class="stat-card" style="border-bottom-color: #f8fafc">
                         <h4 data-i18n="dash_brands">إجمالي العلامات التجارية</h4>
@@ -442,8 +474,6 @@
         let milestonesData = [], confProducts = [], confSkus = [], confSuppliers = [], confMilestones = [], confStatus = [];
         let currentTrackedProduct = null;
         let chartStatusInstance=null, chartBrandsInstance=null, chartBottleneckInstance=null, chartSupplierInstance=null;
-        const ADMIN_PWD = "1234";
-        let loggedInUser = '';
 
         function sortArray(arr) { return arr.sort((a,b) => a.localeCompare(b)); }
 
@@ -455,34 +485,22 @@
         setInterval(updateClock, 1000);
 
         function updateWelcomeText() {
-            if(loggedInUser) {
-                document.getElementById('welcomeUserText').innerText = currentLang === 'ar' ? `مرحباً، ${loggedInUser}` : `Welcome, ${loggedInUser}`;
-            }
+            document.getElementById('welcomeUserText').innerText = currentLang === 'ar' ? `مرحباً بك في Salutem` : `Welcome to Salutem`;
         }
 
-        window.attemptLogin = () => {
-            const u = document.getElementById('loginUser').value;
-            const p = document.getElementById('loginPass').value;
-            
-            if(u && p === ADMIN_PWD) { 
-                loggedInUser = u;
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appScreen').style.display = 'flex';
-                updateWelcomeText();
-                updateClock(); 
-            } else { document.getElementById('loginError').style.display = 'block'; }
+        window.enterApp = () => {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appScreen').style.display = 'flex';
+            updateWelcomeText();
+            updateClock(); 
+            switchTab('reports');
         }
 
         window.logout = () => {
-            if(confirm(currentLang === 'ar' ? 'تسجيل الخروج؟' : 'Logout?')) {
-                loggedInUser = '';
-                document.getElementById('appScreen').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'flex';
-                document.getElementById('loginUser').value = '';
-                document.getElementById('loginPass').value = '';
-                document.getElementById('sidebar').classList.remove('open');
-                document.getElementById('sidebarOverlay').classList.remove('open');
-            }
+            document.getElementById('appScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
         }
 
         window.toggleSidebar = () => {
@@ -520,7 +538,7 @@
         let currentLang = localStorage.getItem('pharmaLang') || 'ar';
         const translations = {
             ar: {
-                tab_tracker: "📝 الخطة (Forecast)", tab_followup: "🔄 التحديث الفعلي (Actuals)", tab_reports: "📊 لوحات القياس (Dashboards)", tab_config: "⚙️ الإعدادات (Config)", btn_logout: "🚪 تسجيل الخروج",
+                tab_tracker: "📝 الخطة (Forecast)", tab_followup: "🔄 التحديث الفعلي (Actuals)", tab_reports: "📊 لوحات القياس (Dashboards)", tab_config: "⚙️ الإعدادات (Config)", btn_logout: "🏠 العودة للرئيسية",
                 lbl_product: "العلامة التجارية", lbl_sku: "رمز الوحدة (SKU)", lbl_supplier: "المورد", lbl_milestone: "المرحلة", lbl_status: "الحالة الوصفية", lbl_notes: "ملاحظات",
                 lbl_start: "تاريخ البدء المخطط", lbl_end: "تاريخ الانتهاء المخطط", lbl_actual_start: "تاريخ البدء الفعلي", lbl_actual_end: "تاريخ الانتهاء الفعلي",
                 btn_add_forecast: "➕ إضافة لخطة التوقع", btn_export: "📊 تصدير إكسيل", btn_save: "💾 حفظ التحديث", btn_cancel: "إلغاء", btn_add_sm: "إضافة",
@@ -529,10 +547,11 @@
                 dash_brands: "إجمالي العلامات", dash_miles: "المراحل المخططة", dash_completed: "المراحل المكتملة", dash_delayed: "المراحل المتأخرة", chart_status_title: "توزيع حالات الإنجاز", chart_brand_title: "نسبة الإنجاز لكل علامة", chart_delayed_title: "المراحل الأكثر تأخراً (Bottlenecks)", chart_supplier_title: "توزيع الإنجاز حسب المورد",
                 conf_p_title: "العلامات التجارية (A-Z)", conf_sku_title: "رموز الوحدات SKUs (A-Z)", conf_supplier_title: "الموردين (A-Z)", conf_m_title: "المراحل (ترتيب مخصص)", conf_s_title: "الحالات الوصفية (A-Z)",
                 status_notstarted: "لم يبدأ ⏳", status_delayed: "متأخر 🚨", status_progress: "قيد التنفيذ 🔄", status_completed: "مكتمل ✅",
-                msg_dup_conf: "هذا الإدخال موجود مسبقاً في القائمة!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! هذه المرحلة موجودة مسبقاً لنفس العلامة والـ SKU.", msg_overlap: "تنبيه: لا يمكن الحفظ! يوجد تداخل في التواريخ المخططة مع مرحلة أخرى لنفس العلامة والـ SKU.", msg_date_err: "خطأ: تاريخ البداية المخطط يجب أن يكون قبل أو يساوي تاريخ النهاية المخطط!"
+                msg_dup_conf: "هذا الإدخال موجود مسبقاً في القائمة!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! هذه المرحلة موجودة مسبقاً لنفس العلامة والـ SKU.", msg_overlap: "تنبيه: لا يمكن الحفظ! يوجد تداخل في التواريخ المخططة مع مرحلة أخرى لنفس العلامة والـ SKU.", msg_date_err: "خطأ: تاريخ البداية المخطط يجب أن يكون قبل أو يساوي تاريخ النهاية المخطط!",
+                msg_confirm_del: "هل أنت متأكد من الحذف؟", msg_confirm_order: "هل أنت متأكد من تغيير الترتيب؟"
             },
             en: {
-                tab_tracker: "📝 Forecast", tab_followup: "🔄 Actuals Update", tab_reports: "📊 Dashboards", tab_config: "⚙️ Config", btn_logout: "🚪 Logout",
+                tab_tracker: "📝 Forecast", tab_followup: "🔄 Actuals Update", tab_reports: "📊 Dashboards", tab_config: "⚙️ Config", btn_logout: "🏠 Back to Home",
                 lbl_product: "Brand Name", lbl_sku: "SKU", lbl_supplier: "Supplier", lbl_milestone: "Milestone", lbl_status: "Desc Status", lbl_notes: "Notes",
                 lbl_start: "Plan Start", lbl_end: "Plan End", lbl_actual_start: "Actual Start", lbl_actual_end: "Actual End",
                 btn_add_forecast: "➕ Add Forecast", btn_export: "📊 Export Excel", btn_save: "💾 Save Update", btn_cancel: "Cancel", btn_add_sm: "Add",
@@ -541,7 +560,8 @@
                 dash_brands: "Total Brands", dash_miles: "Planned Milestones", dash_completed: "Completed Milestones", dash_delayed: "Delayed Milestones", chart_status_title: "Auto Status Distribution", chart_brand_title: "Completion % by Brand", chart_delayed_title: "Most Delayed Milestones (Bottlenecks)", chart_supplier_title: "Completion Distribution by Supplier",
                 conf_p_title: "Brands (A-Z)", conf_sku_title: "SKUs (A-Z)", conf_supplier_title: "Suppliers (A-Z)", conf_m_title: "Milestones (Custom Sort)", conf_s_title: "Desc Status (A-Z)",
                 status_notstarted: "Not Started ⏳", status_delayed: "Delayed 🚨", status_progress: "In Progress 🔄", status_completed: "Completed ✅",
-                msg_dup_conf: "This entry already exists in the list!", msg_dup_mile: "Alert: Cannot add! Milestone already exists for this Brand and SKU.", msg_overlap: "Alert: Cannot save! Planned dates overlap with another milestone for this Brand and SKU.", msg_date_err: "Error: Plan Start date must be before or equal to Plan End date!"
+                msg_dup_conf: "This entry already exists in the list!", msg_dup_mile: "Alert: Cannot add! Milestone already exists for this Brand and SKU.", msg_overlap: "Alert: Cannot save! Planned dates overlap with another milestone for this Brand and SKU.", msg_date_err: "Error: Plan Start date must be before or equal to Plan End date!",
+                msg_confirm_del: "Are you sure you want to delete?", msg_confirm_order: "Are you sure you want to change order?"
             }
         };
 
@@ -625,17 +645,21 @@
         
         window.deleteConfig = (type, idx) => {
             const arrName = 'conf'+type.charAt(0).toUpperCase()+type.slice(1);
-            if(prompt('Password:') === ADMIN_PWD) { eval(`${arrName}.splice(${idx}, 1)`); setDoc(globalDocRef, {[arrName]: eval(arrName)}, {merge:true}); }
+            if(confirm(translations[currentLang].msg_confirm_del)) { 
+                eval(`${arrName}.splice(${idx}, 1)`); 
+                setDoc(globalDocRef, {[arrName]: eval(arrName)}, {merge:true}); 
+            }
         }
 
         window.moveMilestone = (idx, direction) => {
-            if(prompt('Enter password to change order:') !== ADMIN_PWD) return alert('Wrong password!');
-            if (direction === -1 && idx > 0) {
-                [confMilestones[idx - 1], confMilestones[idx]] = [confMilestones[idx], confMilestones[idx - 1]];
-            } else if (direction === 1 && idx < confMilestones.length - 1) {
-                [confMilestones[idx + 1], confMilestones[idx]] = [confMilestones[idx], confMilestones[idx + 1]];
+            if(confirm(translations[currentLang].msg_confirm_order)) {
+                if (direction === -1 && idx > 0) {
+                    [confMilestones[idx - 1], confMilestones[idx]] = [confMilestones[idx], confMilestones[idx - 1]];
+                } else if (direction === 1 && idx < confMilestones.length - 1) {
+                    [confMilestones[idx + 1], confMilestones[idx]] = [confMilestones[idx], confMilestones[idx + 1]];
+                }
+                setDoc(globalDocRef, { confMilestones: confMilestones }, {merge:true});
             }
-            setDoc(globalDocRef, { confMilestones: confMilestones }, {merge:true});
         }
 
         // --- Data Logic & Auto-Status Calculation ---
@@ -798,13 +822,12 @@
             closeUpdateModal();
         };
 
-        window.deleteRecord = (idx) => { if(confirm(currentLang==='ar'?'تأكيد الحذف نهائياً؟':'Confirm Delete?')) { milestonesData.splice(idx, 1); setDoc(globalDocRef, { milestonesData }, { merge: true }); } };
+        window.deleteRecord = (idx) => { if(confirm(translations[currentLang].msg_confirm_del)) { milestonesData.splice(idx, 1); setDoc(globalDocRef, { milestonesData }, { merge: true }); } };
 
         // --- EXPORT TO EXCEL ---
         window.exportToExcel = () => {
             if (milestonesData.length === 0) return;
             
-            // إضافة الترويسات المطلوبة بالضبط
             let csv = "\uFEFFBrand,SKU,Supplier,Milestone,Desc Status,Plan Start,Plan End,Actual Start,Actual End,Execution Status\n";
             if(currentLang === 'ar') {
                 csv = "\uFEFFالعلامة التجارية,رمز الوحدة (SKU),المورد,المرحلة,الحالة الوصفية,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,تاريخ البدء الفعلي,تاريخ الانتهاء الفعلي,حالة التنفيذ الأوتوماتيكية\n";
@@ -872,7 +895,7 @@
                 options: { scales: { y: { beginAtZero: true, max: 100, grid:{color:'rgba(255,255,255,0.05)'} }, x: { grid:{display:false} } }, plugins: { legend: { display: false } }, maintainAspectRatio: false }
             });
 
-            // 3. Bottleneck Bar (Delayed by Milestone)
+            // 3. Bottleneck Bar
             const ctx3 = document.getElementById('chartBottleneck').getContext('2d');
             const dLabels = Object.keys(delayedStats); const dData = Object.values(delayedStats);
             if(chartBottleneckInstance) chartBottleneckInstance.destroy();
