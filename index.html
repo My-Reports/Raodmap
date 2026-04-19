@@ -60,7 +60,8 @@
         .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; transform: translateX(5px); }
         .nav-btn.active { background: linear-gradient(90deg, rgba(6, 182, 212, 0.2), transparent); color: var(--accent-blue); border-right: 3px solid var(--accent-blue); border-radius: 4px; }
         html[dir="ltr"] .nav-btn.active { border-right: none; border-left: 3px solid var(--accent-blue); }
-        .logout-btn { background: #1e293b; color: var(--status-delayed); margin-top: auto; text-align: center;}
+        /* تم إضافة هامش سفلي هنا لرفع الزر للأعلى */
+        .logout-btn { background: #1e293b; color: var(--status-delayed); margin-top: auto; margin-bottom: 20px; text-align: center;}
         
         .sidebar-overlay { display: none; position: fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index: 1500; }
         .sidebar-overlay.open { display: block; }
@@ -355,6 +356,10 @@
                             </button>
                         </div>
 
+                        <div class="form-group" id="fg_skus">
+                            <label data-i18n="lbl_sku">رمز الوحدة (SKU Name)</label>
+                            <select id="skuName" required></select>
+                        </div>
                         <div class="form-group" id="fg_skus2">
                             <label data-i18n="lbl_sku2">Molecules Name</label>
                             <select id="sku2Name" required></select>
@@ -363,10 +368,7 @@
                             <label data-i18n="lbl_product">العلامة التجارية (Brand Name) - <span style="font-weight:normal; color:#64748b">اختياري</span></label>
                             <select id="productName"></select>
                         </div>
-                        <div class="form-group" id="fg_skus">
-                            <label data-i18n="lbl_sku">رمز الوحدة (SKU Name)</label>
-                            <select id="skuName" required></select>
-                        </div>
+                        
                         <div class="form-group" id="fg_suppliers">
                             <label data-i18n="lbl_supplier">المورد (Supplier) - <span style="font-weight:normal; color:#64748b">اختياري</span></label>
                             <select id="supplierName"></select>
@@ -391,7 +393,7 @@
                         
                         <div class="form-group" style="grid-column: 1 / -1;">
                             <label style="color: var(--accent-blue);">product</label>
-                            <input type="text" id="fullIdentifier" readonly style="background-color: rgba(0,0,0,0.5); border-color: rgba(6, 182, 212, 0.4); color: #60a5fa; font-weight: bold; cursor: not-allowed;" placeholder="Molecules - Brand - SKU">
+                            <input type="text" id="fullIdentifier" readonly style="background-color: rgba(0,0,0,0.5); border-color: rgba(6, 182, 212, 0.4); color: #60a5fa; font-weight: bold; cursor: not-allowed;" placeholder="SKU - Molecules - Brand">
                         </div>
 
                         <div class="form-group" style="grid-column: 1 / -1;">
@@ -421,8 +423,8 @@
                     <table id="dataTableTracker">
                         <thead>
                             <tr>
-                                <th class="col_skus2"><span data-i18n="th_sku2">Molecules Name</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_skus"><span data-i18n="th_sku">SKU</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
+                                <th class="col_skus2"><span data-i18n="th_sku2">Molecules Name</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_products"><span data-i18n="th_product">العلامة</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_suppliers"><span data-i18n="th_supplier">المورد</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_milestones"><span data-i18n="th_milestone">المرحلة</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
@@ -451,8 +453,8 @@
                     <table id="dataTableFollowup">
                         <thead>
                             <tr>
-                                <th class="col_skus2"><span data-i18n="th_sku2">Molecules Name</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="col_skus"><span data-i18n="th_sku">SKU</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
+                                <th class="col_skus2"><span data-i18n="th_sku2">Molecules Name</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="col_products"><span data-i18n="th_product">العلامة</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="col_suppliers"><span data-i18n="th_supplier">المورد</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="col_milestones"><span data-i18n="th_milestone">المرحلة</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
@@ -515,16 +517,6 @@
             <div id="view-config" class="container view-section">
                 <div class="config-page-layout">
                     <div class="config-column" id="leftConfigColumn">
-                        <div class="config-card" id="card_products">
-                            <div class="config-summary" onclick="toggleConfig(this)">
-                                <h3 data-i18n="conf_p_title">العلامات التجارية Brands (A-Z)</h3>
-                                <span class="caret">▼</span>
-                            </div>
-                            <div class="config-content">
-                                <div style="display:flex; gap:10px;"><input type="text" id="newProductInput"><button class="btn-add-sm" onclick="addConfig('products')" data-i18n="btn_add_sm">إضافة</button></div>
-                                <ul class="config-list" id="productsList"></ul>
-                            </div>
-                        </div>
                         
                         <div class="config-card" id="card_skus">
                             <div class="config-summary" onclick="toggleConfig(this)">
@@ -545,6 +537,17 @@
                             <div class="config-content">
                                 <div style="display:flex; gap:10px;"><input type="text" id="newSku2Input"><button class="btn-add-sm" onclick="addConfig('skus2')" data-i18n="btn_add_sm">إضافة</button></div>
                                 <ul class="config-list" id="skus2List"></ul>
+                            </div>
+                        </div>
+
+                        <div class="config-card" id="card_products">
+                            <div class="config-summary" onclick="toggleConfig(this)">
+                                <h3 data-i18n="conf_p_title">العلامات التجارية Brands (A-Z)</h3>
+                                <span class="caret">▼</span>
+                            </div>
+                            <div class="config-content">
+                                <div style="display:flex; gap:10px;"><input type="text" id="newProductInput"><button class="btn-add-sm" onclick="addConfig('products')" data-i18n="btn_add_sm">إضافة</button></div>
+                                <ul class="config-list" id="productsList"></ul>
                             </div>
                         </div>
                         
@@ -625,8 +628,9 @@
             return items.filter(Boolean).sort((a,b) => String(a).localeCompare(String(b))); 
         }
 
+        // الترتيب الجديد للمسمى المدمج
         function getFullProductName(item) {
-            return [item.sku2Name, item.productName, item.skuName].filter(Boolean).join(' - ') || '-';
+            return [item.skuName, item.sku2Name, item.productName].filter(Boolean).join(' - ') || '-';
         }
 
         function updateWelcomeText() { document.getElementById('welcomeUserText').innerText = currentLang === 'ar' ? `مرحباً بك` : `Welcome`; }
@@ -634,7 +638,7 @@
         window.attemptLogin = () => {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'flex';
-            updateWelcomeText(); switchTab('maindash'); // جعل اللوحة الرئيسية هي الصفحة الافتراضية 
+            updateWelcomeText(); switchTab('maindash'); 
         }
 
         window.logout = () => {
@@ -820,9 +824,10 @@
             const sku = skuEl && skuEl.selectedIndex > 0 ? skuEl.options[skuEl.selectedIndex].text : '';
             
             const parts = [];
+            // ترتيب المسمى المدمج ليتوافق مع ترتيب الإدخال
+            if(sku) parts.push(sku);
             if(mol) parts.push(mol);
             if(brand) parts.push(brand);
-            if(sku) parts.push(sku);
             
             document.getElementById('fullIdentifier').value = parts.join(' - ');
         }
@@ -1027,9 +1032,10 @@
                 const sInfo = calculateProgressStatus(item.startDate, item.endDate, item.actualStartDate, item.actualEndDate, item.manualExecutionStatus);
                 const dispBrand = item.productName ? translateItem(item.productName) : '-';
                 
+                // الترتيب الجديد في الجداول: SKU -> Molecules -> Brand
                 tbodyTracker.innerHTML += `<tr>
-                    <td class="col_skus2">${item.sku2Name||'-'}</td>
                     <td class="col_skus">${item.skuName||'-'}</td>
+                    <td class="col_skus2">${item.sku2Name||'-'}</td>
                     <td class="col_products"><strong style="color:var(--accent-blue)">${dispBrand}</strong></td>
                     <td class="col_suppliers">${item.supplier||'-'}</td>
                     <td class="col_milestones">${translateItem(item.milestone) || '-'}</td>
@@ -1038,8 +1044,8 @@
                 </tr>`;
 
                 tbodyFollowup.innerHTML += `<tr>
-                    <td class="col_skus2">${item.sku2Name||'-'}</td>
                     <td class="col_skus">${item.skuName||'-'}</td>
+                    <td class="col_skus2">${item.sku2Name||'-'}</td>
                     <td class="col_products"><strong style="color:var(--accent-blue)">${dispBrand}</strong></td>
                     <td class="col_suppliers">${item.supplier||'-'}</td>
                     <td class="col_milestones">${translateItem(item.milestone) || '-'}</td>
@@ -1133,12 +1139,13 @@
             } 
         };
 
+        // التصدير إلى إكسيل يتوافق مع الترتيب الجديد
         window.exportForecastExcel = () => {
             if (milestonesData.length === 0) return;
-            let csv = currentLang === 'ar' ? "\uFEFFالمادة الفعالة (Molecules Name),رمز الوحدة (SKU),العلامة التجارية,المورد,المعرف المدمج (Product),المرحلة,الحالة الوصفية,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,ملاحظات\n" : "\uFEFFMolecules Name,SKU,Brand,Supplier,Product Identifier,Milestone,Status,Plan Start,Plan End,Notes\n";
+            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),المادة الفعالة (Molecules Name),العلامة التجارية,المورد,المعرف المدمج (Product),المرحلة,الحالة الوصفية,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,ملاحظات\n" : "\uFEFFSKU,Molecules Name,Brand,Supplier,Product Identifier,Milestone,Status,Plan Start,Plan End,Notes\n";
             milestonesData.forEach(i => {
                 const fullId = getFullProductName(i);
-                csv += `"${i.sku2Name || ''}","${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${fullId}","${translateItem(i.milestone)}","${translateItem(i.mainStatus)}","${i.startDate}","${i.endDate}","${i.notes || ''}"\n`; 
+                csv += `"${i.skuName || ''}","${i.sku2Name || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${fullId}","${translateItem(i.milestone)}","${translateItem(i.mainStatus)}","${i.startDate}","${i.endDate}","${i.notes || ''}"\n`; 
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
             link.download = `Forecast_Export_${new Date().toISOString().split('T')[0]}.csv`; link.click();
@@ -1146,10 +1153,10 @@
 
         window.exportToExcel = () => {
             if (milestonesData.length === 0) return;
-            let csv = currentLang === 'ar' ? "\uFEFFالمادة الفعالة (Molecules Name),رمز الوحدة (SKU),العلامة التجارية (Brand),المورد,المرحلة,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,تاريخ البدء الفعلي,تاريخ الانتهاء الفعلي,حالة التنفيذ\n" : "\uFEFFMolecules Name,SKU,Brand,Supplier,Milestone,Plan Start,Plan End,Actual Start,Actual End,Execution Status\n";
+            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),المادة الفعالة (Molecules Name),العلامة التجارية (Brand),المورد,المرحلة,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,تاريخ البدء الفعلي,تاريخ الانتهاء الفعلي,حالة التنفيذ\n" : "\uFEFFSKU,Molecules Name,Brand,Supplier,Milestone,Plan Start,Plan End,Actual Start,Actual End,Execution Status\n";
             milestonesData.forEach(i => { 
                 const sInfo = calculateProgressStatus(i.startDate, i.endDate, i.actualStartDate, i.actualEndDate, i.manualExecutionStatus);
-                csv += `"${i.sku2Name || ''}","${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${translateItem(i.milestone)}","${i.startDate}","${i.endDate}","${i.actualStartDate || ''}","${i.actualEndDate || ''}","${sInfo.text}"\n`; 
+                csv += `"${i.skuName || ''}","${i.sku2Name || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${translateItem(i.milestone)}","${i.startDate}","${i.endDate}","${i.actualStartDate || ''}","${i.actualEndDate || ''}","${sInfo.text}"\n`; 
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
             link.download = `Actuals_Export_${new Date().toISOString().split('T')[0]}.csv`; link.click();
