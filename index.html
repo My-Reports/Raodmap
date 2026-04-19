@@ -166,19 +166,19 @@
         }
 
         /* ------------------ Timeline Slicer & Visuals ------------------ */
-        .timeline-slicer-container { margin-bottom: 20px; text-align: center; }
-        .timeline-slicer { background: var(--input-bg); border: 1px solid var(--accent-blue); color: white; padding: 10px 20px; border-radius: 8px; width: 100%; max-width: 400px; font-size: 1.05rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); outline: none; transition: border-color 0.3s; }
+        .timeline-slicer-container { margin-bottom: 30px; text-align: center; }
+        .timeline-slicer { background: var(--input-bg); border: 1px solid var(--accent-blue); color: white; padding: 12px 25px; border-radius: 8px; width: 100%; max-width: 500px; font-size: 1.15rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); outline: none; transition: border-color 0.3s; }
         .timeline-slicer:focus { border-color: #3b82f6; }
         
-        .timeline-scroll-area { overflow-x: auto; padding-bottom: 20px; }
-        .timeline-wrapper { display: flex; position: relative; min-width: 100%; padding-top: 30px; align-items: flex-start; }
+        .timeline-scroll-area { overflow-x: auto; padding-bottom: 20px; min-height: 400px; display: flex; flex-direction: column; }
+        .timeline-wrapper { display: flex; position: relative; min-width: 100%; padding-top: 30px; align-items: flex-start; flex: 1; }
         .timeline-track { position: absolute; top: 43px; left: 0; width: 100%; height: 4px; background: rgba(6, 182, 212, 0.3); z-index: 1; }
-        .timeline-node { display: flex; flex-direction: column; align-items: center; width: 220px; flex-shrink: 0; z-index: 2; position: relative; }
+        .timeline-node { display: flex; flex-direction: column; align-items: center; width: 240px; flex-shrink: 0; z-index: 2; position: relative; }
         .timeline-point { width: 30px; height: 30px; border-radius: 50%; background: var(--card-bg); border: 5px solid var(--accent-blue); box-shadow: 0 0 15px rgba(6, 182, 212, 0.6); z-index: 3; transition: 0.3s; }
         .timeline-node:hover .timeline-point { transform: scale(1.2); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
-        .timeline-date { margin-top: 15px; font-weight: bold; color: #fff; background: linear-gradient(135deg, var(--accent-blue), #3b82f6); padding: 5px 15px; border-radius: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.4); text-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 0.95rem; letter-spacing: 1px; }
-        .timeline-items { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; width: 90%; }
-        .timeline-item { background: rgba(15, 23, 42, 0.7); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); padding: 10px; text-align: center; font-size: 0.85rem; color: var(--text-main); line-height: 1.4; box-shadow: 0 4px 8px rgba(0,0,0,0.5); transition: 0.2s; border-right: 3px solid var(--accent-blue); word-break: break-word; }
+        .timeline-date { margin-top: 15px; font-weight: bold; color: #fff; background: linear-gradient(135deg, var(--accent-blue), #3b82f6); padding: 5px 15px; border-radius: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.4); text-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 1rem; letter-spacing: 1px; }
+        .timeline-items { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; width: 90%; }
+        .timeline-item { background: rgba(15, 23, 42, 0.7); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); padding: 12px; text-align: center; font-size: 0.9rem; font-weight: bold; color: var(--text-main); line-height: 1.4; box-shadow: 0 4px 8px rgba(0,0,0,0.5); transition: 0.2s; border-right: 3px solid var(--accent-blue); word-break: break-word; }
         html[dir="ltr"] .timeline-item { border-right: none; border-left: 3px solid var(--accent-blue); }
         .timeline-item:hover { background: rgba(30, 41, 59, 0.9); border-color: rgba(6, 182, 212, 0.5); transform: translateY(-2px); }
 
@@ -311,9 +311,10 @@
                 <span style="color: #64748b; font-size: 0.8rem; letter-spacing: 1px;">Pharma Tracker</span>
             </div>
             <nav class="nav-links">
+                <button class="nav-btn active" onclick="switchTab('maindash')" id="nav-maindash" data-i18n="tab_maindash">🏠 اللوحة الرئيسية</button>
                 <button class="nav-btn" onclick="switchTab('tracker')" id="nav-tracker" data-i18n="tab_tracker">📝 الخطة الأساسية (Forecast)</button>
                 <button class="nav-btn" onclick="switchTab('followup')" id="nav-followup" data-i18n="tab_followup">🔄 المتابعة الفعلية (Actuals)</button>
-                <button class="nav-btn active" onclick="switchTab('reports')" id="nav-reports" data-i18n="tab_reports">📊 لوحات القياس (Dashboards)</button>
+                <button class="nav-btn" onclick="switchTab('reports')" id="nav-reports" data-i18n="tab_reports">📊 لوحات القياس (Dashboards)</button>
                 <button class="nav-btn" onclick="switchTab('config')" id="nav-config" data-i18n="tab_config">⚙️ الإعدادات (Config)</button>
                 <button class="nav-btn logout-btn" onclick="logout()" data-i18n="btn_logout">🚪 العودة للبداية</button>
             </nav>
@@ -323,13 +324,26 @@
             <header class="topbar">
                 <div class="topbar-left">
                     <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-                    <h3 id="pageTitle" style="color: var(--text-main); margin: 0; font-weight: 600;">لوحات القياس والتقارير</h3>
+                    <h3 id="pageTitle" style="color: var(--text-main); margin: 0; font-weight: 600;">اللوحة الرئيسية</h3>
                 </div>
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <span id="welcomeUserText" style="font-weight: bold; color: var(--accent-blue);">مرحباً بك</span>
                     <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">English</button>
                 </div>
             </header>
+
+            <div id="view-maindash" class="container view-section active">
+                <div class="card chart-card" style="margin-top: 10px; overflow: hidden; min-height: 70vh; display: flex; flex-direction: column;">
+                    <h3 data-i18n="timeline_title" style="text-align: center; margin-bottom: 25px; font-size: 1.5rem; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">الجدول الزمني للأصناف حسب المرحلة (Quarterly)</h3>
+                    <div class="timeline-slicer-container">
+                        <select id="timelineSlicer" class="timeline-slicer" onchange="renderTimeline()">
+                            </select>
+                    </div>
+                    <div class="timeline-scroll-area">
+                        <div id="timelineContainer"></div>
+                    </div>
+                </div>
+            </div>
 
             <div id="view-tracker" class="container view-section">
                 <div class="card">
@@ -455,7 +469,7 @@
                 </div>
             </div>
 
-            <div id="view-reports" class="container view-section active">
+            <div id="view-reports" class="container view-section">
                 <div class="dash-summary">
                     <div class="stat-card" style="border-bottom-color: #f8fafc">
                         <h4 data-i18n="dash_brands">إجمالي السجلات الموثقة</h4>
@@ -496,18 +510,7 @@
                         <div class="chart-container"><canvas id="chartSupplier"></canvas></div>
                     </div>
                 </div>
-
-                <div class="card chart-card" style="margin-top: 20px; overflow: hidden;">
-                    <h3 data-i18n="timeline_title" style="text-align: center; margin-bottom: 15px; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">توزيع الأصناف على المسار الزمني (حسب الخطة)</h3>
-                    <div class="timeline-slicer-container">
-                        <select id="timelineSlicer" class="timeline-slicer" onchange="renderTimeline()">
-                            </select>
-                    </div>
-                    <div class="timeline-scroll-area">
-                        <div id="timelineContainer"></div>
-                    </div>
-                </div>
-                </div>
+            </div>
 
             <div id="view-config" class="container view-section">
                 <div class="config-page-layout">
@@ -631,7 +634,7 @@
         window.attemptLogin = () => {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'flex';
-            updateWelcomeText(); switchTab('reports'); 
+            updateWelcomeText(); switchTab('maindash'); // جعل اللوحة الرئيسية هي الصفحة الافتراضية 
         }
 
         window.logout = () => {
@@ -650,11 +653,18 @@
             document.getElementById(`view-${tabName}`).classList.add('active');
             document.getElementById(`nav-${tabName}`).classList.add('active');
             
-            const titles = { 'tracker': currentLang === 'ar' ? 'شاشة إدخال الخطة (Forecast Data Entry)' : 'Forecast Data Entry', 'followup': currentLang === 'ar' ? 'شاشة التحديث الفعلي (Actuals Update)' : 'Actuals Update Screen', 'config': currentLang === 'ar' ? 'شاشة الإعدادات التعريفية' : 'Configuration View', 'reports': currentLang === 'ar' ? 'لوحات القياس والتقارير' : 'Dashboards & Reports' };
+            const titles = { 
+                'maindash': currentLang === 'ar' ? 'اللوحة الرئيسية' : 'Main Dashboard',
+                'tracker': currentLang === 'ar' ? 'شاشة إدخال الخطة (Forecast)' : 'Forecast Data Entry', 
+                'followup': currentLang === 'ar' ? 'شاشة التحديث الفعلي (Actuals)' : 'Actuals Update Screen', 
+                'config': currentLang === 'ar' ? 'شاشة الإعدادات (Config)' : 'Configuration View', 
+                'reports': currentLang === 'ar' ? 'لوحات القياس الفرعية (Dashboards)' : 'Dashboards & Reports' 
+            };
             document.getElementById('pageTitle').innerText = titles[tabName];
             
             document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open');
             if(tabName === 'reports') renderDashboards();
+            if(tabName === 'maindash') renderTimeline();
         }
 
         const translationDict = { "Identifying Supplier": "تحديد المورد", "Signing agreement and agreed on commercial terms": "توقيع الاتفاقية", "Collecting all registration documents along with the CPP": "تجميع وثائق التسجيل", "Dossier Submission to IMOH – final registration": "التقديم لوزارة الصحة", "Ordering the product + Analysis stage": "مرحلة الطلب والتحليل", "Product launch": "إطلاق المنتج", "New product": "منتج جديد", "Under Discussion": "قيد المناقشة", "No Brand": "بدون علامة تجارية" };
@@ -662,27 +672,27 @@
         let currentLang = localStorage.getItem('pharmaLang') || 'ar';
         const translations = {
             ar: {
-                tab_tracker: "📝 الخطة (Forecast)", tab_followup: "🔄 التحديث الفعلي (Actuals)", tab_reports: "📊 لوحات القياس (Dashboards)", tab_config: "⚙️ الإعدادات (Config)", btn_logout: "🚪 العودة للبداية",
+                tab_maindash: "🏠 اللوحة الرئيسية", tab_tracker: "📝 الخطة (Forecast)", tab_followup: "🔄 التحديث الفعلي (Actuals)", tab_reports: "📊 لوحات القياس (Dashboards)", tab_config: "⚙️ الإعدادات (Config)", btn_logout: "🚪 العودة للبداية",
                 lbl_product: "العلامة (Brand) - اختياري", lbl_sku: "رمز الوحدة (SKU)", lbl_sku2: "المادة الفعالة (Molecules Name)", lbl_supplier: "المورد - اختياري", lbl_milestone: "المرحلة", lbl_status: "الحالة الوصفية", lbl_notes: "ملاحظات",
                 lbl_start: "تاريخ البدء المخطط", lbl_end: "تاريخ الانتهاء المخطط", lbl_actual_start: "بدء فعلي", lbl_actual_end: "نهاية فعلية",
                 btn_add_forecast: "➕ إضافة لخطة التوقع", btn_export: "📊 تصدير إكسيل", btn_save: "💾 حفظ التحديث", btn_cancel: "إلغاء", btn_add_sm: "إضافة", 
                 th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_status: "الحالة", th_start: "بداية مخططة", th_end: "نهاية مخططة", th_actual_start: "بدء فعلي", th_actual_end: "نهاية فعلية", th_progress: "حالة التنفيذ", th_view: "المسار", th_action: "إجراءات",
                 followup_title: "شاشة المتابعة والتحديث الفعلي", followup_desc: "تحديث التواريخ وحالة التنفيذ الأوتوماتيكية أو اليدوية.", edit_title: "تحديث تواريخ وحالة الإنجاز",
                 dash_brands: "إجمالي السجلات الموثقة", dash_miles: "المراحل المخططة", dash_completed: "المراحل المكتملة", dash_delayed: "المراحل المتأخرة", chart_status_title: "توزيع حالات الإنجاز (اضغط للتفاصيل)", chart_brand_title: "نسبة الإنجاز", chart_delayed_title: "المراحل الأكثر تأخراً (Bottlenecks)", chart_supplier_title: "توزيع الإنجاز حسب المورد",
-                timeline_title: "توزيع الأصناف على المسار الزمني (حسب الخطة)",
+                timeline_title: "الجدول الزمني للأصناف حسب المرحلة (Quarterly)",
                 conf_p_title: "العلامات التجارية Brands (A-Z)", conf_sku_title: "رموز الوحدات SKUs (A-Z)", conf_sku2_title: "المواد الفعالة Molecules Names (A-Z)", conf_supplier_title: "الموردين (A-Z)", conf_m_title: "المراحل (ترتيب مخصص)", conf_s_title: "الحالات الوصفية (A-Z)",
                 status_notstarted: "لم يبدأ ⏳", status_delayed: "متأخر 🚨", status_progress: "قيد التنفيذ 🔄", status_completed: "مكتمل ✅",
                 msg_dup_conf: "الإدخال موجود مسبقاً!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! المرحلة موجودة لنفس العلامة والـ SKU.", msg_overlap: "تنبيه: يوجد تداخل في التواريخ المخططة مع مرحلة أخرى لنفس الـ SKU.", msg_date_err: "خطأ: البداية المخططة يجب أن تكون قبل النهاية!", msg_cannot_delete: "عذراً، لا يمكن الحذف! هذه القائمة مستخدمة."
             },
             en: {
-                tab_tracker: "📝 Forecast", tab_followup: "🔄 Actuals Update", tab_reports: "📊 Dashboards", tab_config: "⚙️ Config", btn_logout: "🚪 Start Screen",
+                tab_maindash: "🏠 Main Dashboard", tab_tracker: "📝 Forecast", tab_followup: "🔄 Actuals Update", tab_reports: "📊 Dashboards", tab_config: "⚙️ Config", btn_logout: "🚪 Start Screen",
                 lbl_product: "Brand Name - Optional", lbl_sku: "SKU", lbl_sku2: "Molecules Name", lbl_supplier: "Supplier - Optional", lbl_milestone: "Milestone", lbl_status: "Desc Status", lbl_notes: "Notes",
                 lbl_start: "Plan Start", lbl_end: "Plan End", lbl_actual_start: "Actual Start", lbl_actual_end: "Actual End",
                 btn_add_forecast: "➕ Add Forecast", btn_export: "📊 Export Excel", btn_save: "💾 Save Update", btn_cancel: "Cancel", btn_add_sm: "Add", 
                 th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_status: "Status", th_start: "Plan Start", th_end: "Plan End", th_actual_start: "Actual Start", th_actual_end: "Actual End", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
                 followup_title: "Actuals vs Forecast Update", followup_desc: "Update dates and execution status here.", edit_title: "Update Progress Dates & Status",
                 dash_brands: "Total Logged Items", dash_miles: "Planned Milestones", dash_completed: "Completed Milestones", dash_delayed: "Delayed Milestones", chart_status_title: "Status Distribution (Click to Drilldown)", chart_brand_title: "Completion %", chart_delayed_title: "Most Delayed Milestones (Bottlenecks)", chart_supplier_title: "Completion Distribution by Supplier",
-                timeline_title: "Timeline of Items by Milestone (Forecast)",
+                timeline_title: "Timeline of Items by Milestone (Quarterly)",
                 conf_p_title: "Brands (A-Z)", conf_sku_title: "SKUs (A-Z)", conf_sku2_title: "Molecules Names (A-z)", conf_supplier_title: "Suppliers (A-Z)", conf_m_title: "Milestones (Custom)", conf_s_title: "Desc Status (A-Z)",
                 status_notstarted: "Not Started ⏳", status_delayed: "Delayed 🚨", status_progress: "In Progress 🔄", status_completed: "Completed ✅",
                 msg_dup_conf: "Entry already exists!", msg_dup_mile: "Alert: Milestone already exists for this Brand and SKU.", msg_overlap: "Alert: Planned dates overlap with another milestone for this SKU.", msg_date_err: "Error: Plan Start date must be before Plan End date!", msg_cannot_delete: "Sorry, cannot delete! This list is used."
@@ -695,7 +705,10 @@
             document.documentElement.lang = currentLang; document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             document.getElementById('langBtn').innerText = currentLang === 'ar' ? 'English' : 'العربية';
             document.querySelectorAll('[data-i18n]').forEach(elem => { const key = elem.getAttribute('data-i18n'); if (translations[currentLang][key]) elem.innerText = translations[currentLang][key]; });
-            updateWelcomeText(); applyHiddenLists(); renderConfig(); renderTables(); if(document.getElementById('view-reports').classList.contains('active')) renderDashboards();
+            updateWelcomeText(); applyHiddenLists(); renderConfig(); renderTables(); 
+            if(document.getElementById('view-reports').classList.contains('active')) renderDashboards();
+            if(document.getElementById('view-maindash').classList.contains('active')) renderTimeline();
+            updateTimelineSlicer();
             updateIdentifier();
         }
 
@@ -717,7 +730,9 @@
             }
             applyHiddenLists();
             renderConfig(); renderTables();
+            updateTimelineSlicer();
             if(document.getElementById('view-reports').classList.contains('active')) renderDashboards();
+            if(document.getElementById('view-maindash').classList.contains('active')) renderTimeline();
         });
 
         function applyHiddenLists() {
@@ -1162,21 +1177,41 @@
             });
         }
 
-        // ================== مسار الدواء الزمني (الجديد) ==================
+        // ================= تحديث قائمة المسار الزمني بشكل منفصل ==================
+        function updateTimelineSlicer() {
+            const tSlicer = document.getElementById('timelineSlicer');
+            if (!tSlicer) return;
+            
+            const usedMilestones = new Set();
+            milestonesData.forEach(i => { if (i.milestone) usedMilestones.add(i.milestone); });
+            
+            const currentTVal = tSlicer.value;
+            tSlicer.innerHTML = '<option value="">-- ' + (currentLang === 'ar' ? 'اختر المرحلة لعرض المسار' : 'Select Milestone to View Timeline') + ' --</option>';
+            
+            [...usedMilestones].sort().forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.text = translateItem(m);
+                if (m === currentTVal) opt.selected = true;
+                tSlicer.appendChild(opt);
+            });
+        }
+
+        // ================== مسار الدواء الزمني بالأرباع (Quarterly) ==================
         window.renderTimeline = () => {
             const slicer = document.getElementById('timelineSlicer');
             const container = document.getElementById('timelineContainer');
             const selectedMs = slicer.value;
 
             if (!selectedMs) {
-                container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted); font-size: 1.1rem;">يرجى اختيار مرحلة (Milestone) لعرض المسار الزمني</div>`;
+                container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted); font-size: 1.1rem; margin-top: 50px;">يرجى اختيار مرحلة (Milestone) لعرض المسار الزمني</div>`;
                 return;
             }
 
             const filteredData = milestonesData.filter(d => d.milestone === selectedMs && d.endDate);
 
             if (filteredData.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--status-delayed); font-size: 1.1rem;">لا توجد أصناف مبرمجة لهذه المرحلة حالياً.</div>`;
+                container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--status-delayed); font-size: 1.1rem; margin-top: 50px;">لا توجد أصناف مبرمجة لهذه المرحلة حالياً.</div>`;
                 return;
             }
 
@@ -1184,8 +1219,13 @@
             filteredData.forEach(item => {
                 const dateParts = item.endDate.split('-'); // YYYY-MM-DD
                 if (dateParts.length >= 2) {
-                    const sortKey = `${dateParts[0]}-${dateParts[1]}`; // YYYY-MM
-                    const displayLabel = `${dateParts[1]}-${dateParts[0].substring(2)}`; // MM-YY
+                    const year = dateParts[0];
+                    const month = parseInt(dateParts[1], 10);
+                    // حساب الربع المالي
+                    const quarter = Math.floor((month - 1) / 3) + 1; 
+                    
+                    const sortKey = `${year}-Q${quarter}`; // مفتاح الترتيب: 2026-Q1
+                    const displayLabel = `Q${quarter}-${year.substring(2)}`; // العرض المطلوب: Q1-26
                     
                     if (!grouped[sortKey]) {
                         grouped[sortKey] = { label: displayLabel, items: [] };
@@ -1218,8 +1258,6 @@
         function renderDashboards() {
             let comp=0, del=0, prog=0, not=0, brandStats={}, delayedStats={}, supplierStats={};
             
-            const usedMilestones = new Set();
-
             milestonesData.forEach(i => {
                 const stat = calculateProgressStatus(i.startDate, i.endDate, i.actualStartDate, i.actualEndDate, i.manualExecutionStatus).raw;
                 if(stat==='Completed') comp++; else if(stat==='Delayed') { del++; delayedStats[i.milestone] = (delayedStats[i.milestone]||0)+1; } else if(stat==='In Progress') prog++; else not++;
@@ -1228,25 +1266,10 @@
                 if(!brandStats[bKey]) brandStats[bKey] = {t:0, c:0};
                 brandStats[bKey].t++; if(stat==='Completed') brandStats[bKey].c++;
                 if(i.supplier) { if(!supplierStats[i.supplier]) supplierStats[i.supplier] = {t:0, c:0}; supplierStats[i.supplier].t++; if(stat==='Completed') supplierStats[i.supplier].c++; }
-                
-                if(i.milestone) usedMilestones.add(i.milestone);
             });
 
             document.getElementById('dash-total-brands').innerText = Object.keys(brandStats).length; document.getElementById('dash-total-miles').innerText = milestonesData.length; document.getElementById('dash-completed').innerText = comp; document.getElementById('dash-delayed').innerText = del;
             
-            // تحديث السلايسر الخاص بالمسار الزمني
-            const tSlicer = document.getElementById('timelineSlicer');
-            const currentTVal = tSlicer.value;
-            tSlicer.innerHTML = '<option value="">-- ' + (currentLang === 'ar' ? 'اختر المرحلة لعرض المسار' : 'Select Milestone to View Timeline') + ' --</option>';
-            [...usedMilestones].sort().forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m;
-                opt.text = translateItem(m);
-                if (m === currentTVal) opt.selected = true;
-                tSlicer.appendChild(opt);
-            });
-            renderTimeline(); // رسم المسار بعد التحديث
-
             if (chartStatusState.mode === 'main') {
                 const ctx1 = document.getElementById('chartStatus').getContext('2d');
                 if(chartStatusInstance) chartStatusInstance.destroy();
