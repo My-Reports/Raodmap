@@ -207,6 +207,26 @@
 </head>
 <body>
 
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: var(--accent-blue); border-bottom:1px solid #334155; padding-bottom:15px; margin-top:0;">تأكيد إضافة الخطة (Confirm Forecast)</h3>
+            <p style="color: var(--text-main); font-size: 0.95rem;">هل أنت متأكد من حفظ هذه البيانات ضمن الخطة الزمنية للمنتج؟</p>
+            
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #334155;">
+                <p style="margin: 5px 0;"><strong>Product:</strong> <span id="confIdText" style="color: var(--accent-blue); font-weight: bold;"></span></p>
+                <p style="margin: 5px 0;"><strong>المرحلة (Milestone):</strong> <span id="confMileText" style="color: #60a5fa;"></span></p>
+                <p style="margin: 5px 0;"><strong>الجدول الزمني:</strong> <span id="confDatesText" style="color: #10b981;"></span></p>
+            </div>
+            
+            <div class="stepper" id="confirmStepperContainer" style="margin-bottom: 35px;"></div>
+            
+            <div class="btn-group">
+                <button class="btn-add" onclick="confirmSaveForecast()">✅ نعم، حفظ البيانات (Yes, Save)</button>
+                <button class="btn-clear" onclick="closeConfirmModal()">❌ لا، تراجع للتعديل (No, Cancel)</button>
+            </div>
+        </div>
+    </div>
+
     <div id="updateModal" class="modal-overlay">
         <div class="modal-content">
             <h3 data-i18n="edit_title" style="color: var(--accent-blue); margin-top:0; border-bottom:1px solid #334155; padding-bottom:15px;">تحديث تواريخ الإنجاز (Update Dates)</h3>
@@ -287,6 +307,13 @@
             <div id="view-tracker" class="container view-section">
                 <div class="card">
                     <form id="trackerForm" class="form-grid">
+                        
+                        <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end; margin-bottom: -10px;">
+                            <button type="button" onclick="clearFormFields()" style="background-color: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 8px 16px; font-size: 0.85rem; border-radius: 8px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.backgroundColor='rgba(239, 68, 68, 0.3)'" onmouseout="this.style.backgroundColor='rgba(239, 68, 68, 0.15)'">
+                                🧹 مسح وتفريغ جميع الحقول (Clear)
+                            </button>
+                        </div>
+
                         <div class="form-group" id="fg_skus2">
                             <label data-i18n="lbl_sku2">Molecules Name</label>
                             <select id="sku2Name" required></select>
@@ -300,9 +327,10 @@
                             <select id="skuName" required></select>
                         </div>
                         <div class="form-group" id="fg_suppliers">
-                            <label data-i18n="lbl_supplier">المورد (Supplier)</label>
-                            <select id="supplierName" required></select>
+                            <label data-i18n="lbl_supplier">المورد (Supplier) - <span style="font-weight:normal; color:#64748b">اختياري</span></label>
+                            <select id="supplierName"></select>
                         </div>
+                        
                         <div class="form-group" id="fg_milestones">
                             <label data-i18n="lbl_milestone">المرحلة (Milestone)</label>
                             <select id="milestone" required></select>
@@ -319,10 +347,17 @@
                             <label data-i18n="lbl_end">تاريخ الانتهاء المخطط</label>
                             <input type="date" id="endDate" required>
                         </div>
+                        
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label style="color: var(--accent-blue);">product</label>
+                            <input type="text" id="fullIdentifier" readonly style="background-color: rgba(0,0,0,0.5); border-color: rgba(6, 182, 212, 0.4); color: #60a5fa; font-weight: bold; cursor: not-allowed;" placeholder="Molecules - Brand - SKU">
+                        </div>
+
                         <div class="form-group" style="grid-column: 1 / -1;">
                             <label data-i18n="lbl_notes">ملاحظات (Notes)</label>
                             <input type="text" id="notesInput" placeholder="...">
                         </div>
+                        
                         <div class="btn-group">
                             <button type="submit" class="btn-add" data-i18n="btn_add_forecast">➕ إضافة لخطة التوقع (Add Forecast)</button>
                         </div>
@@ -337,13 +372,17 @@
                     <div class="stepper" id="stepperContainer"></div>
                 </div>
 
+                <div style="text-align: right; margin-bottom: 10px; margin-top: 10px;">
+                    <button class="btn-excel" style="display: inline-block; padding: 10px 20px; width: auto;" onclick="exportForecastExcel()">📊 تصدير خطة التوقع (Export Forecast)</button>
+                </div>
+
                 <div class="card table-responsive">
                     <table id="dataTableTracker">
                         <thead>
                             <tr>
-                                <th class="col_products"><span data-i18n="th_product">العلامة</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
-                                <th class="col_skus"><span data-i18n="th_sku">SKU</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_skus2"><span data-i18n="th_sku2">Molecules Name</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
+                                <th class="col_skus"><span data-i18n="th_sku">SKU</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
+                                <th class="col_products"><span data-i18n="th_product">العلامة</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_suppliers"><span data-i18n="th_supplier">المورد</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_milestones"><span data-i18n="th_milestone">المرحلة</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="nowrap-col" data-i18n="th_start">البداية المخططة</th>
@@ -371,9 +410,10 @@
                     <table id="dataTableFollowup">
                         <thead>
                             <tr>
-                                <th class="col_products"><span data-i18n="th_product">العلامة</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
-                                <th class="col_skus"><span data-i18n="th_sku">SKU</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="col_skus2"><span data-i18n="th_sku2">Molecules Name</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
+                                <th class="col_skus"><span data-i18n="th_sku">SKU</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
+                                <th class="col_products"><span data-i18n="th_product">العلامة</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
+                                <th class="col_suppliers"><span data-i18n="th_supplier">المورد</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="col_milestones"><span data-i18n="th_milestone">المرحلة</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="nowrap-col" data-i18n="th_start">البداية المخططة</th>
                                 <th class="nowrap-col" data-i18n="th_actual_start" style="color:#60a5fa">بدء فعلي</th>
@@ -510,9 +550,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-        // Firebase Config (Untouched)
         const firebaseConfig = {
             apiKey: "AIzaSyB-zo20b1z6NXYY4V74qZJmQ_bVQmuYVYY",
             authDomain: "rm02-46fc9.firebaseapp.com",
@@ -526,10 +565,10 @@
         const db = getFirestore(app);
         const globalDocRef = doc(db, "pharma_erp", "global_data");
 
-        // --- Utils & State ---
         let milestonesData = [];
         let confProducts = [], confSkus = [], confSkus2 = [], confSuppliers = [], confMilestones = [], confStatus = [];
         let hiddenCoreLists = [];
+        let pendingForecastData = null; 
         
         let chartStatusInstance=null, chartBrandsInstance=null, chartBottleneckInstance=null, chartSupplierInstance=null;
         let chartStatusState = { mode: 'main', currentStatus: null }; 
@@ -543,6 +582,10 @@
             if (!arr) return [];
             const items = Array.isArray(arr) ? arr : Object.values(arr);
             return items.filter(Boolean).sort((a,b) => String(a).localeCompare(String(b))); 
+        }
+
+        function getFullProductName(item) {
+            return [item.sku2Name, item.productName, item.skuName].filter(Boolean).join(' - ') || '-';
         }
 
         function updateWelcomeText() { document.getElementById('welcomeUserText').innerText = currentLang === 'ar' ? `مرحباً بك` : `Welcome`; }
@@ -576,14 +619,13 @@
             if(tabName === 'reports') renderDashboards();
         }
 
-        // --- Translations ---
         const translationDict = { "Identifying Supplier": "تحديد المورد", "Signing agreement and agreed on commercial terms": "توقيع الاتفاقية", "Collecting all registration documents along with the CPP": "تجميع وثائق التسجيل", "Dossier Submission to IMOH – final registration": "التقديم لوزارة الصحة", "Ordering the product + Analysis stage": "مرحلة الطلب والتحليل", "Product launch": "إطلاق المنتج", "New product": "منتج جديد", "Under Discussion": "قيد المناقشة", "No Brand": "بدون علامة تجارية" };
 
         let currentLang = localStorage.getItem('pharmaLang') || 'ar';
         const translations = {
             ar: {
                 tab_tracker: "📝 الخطة (Forecast)", tab_followup: "🔄 التحديث الفعلي (Actuals)", tab_reports: "📊 لوحات القياس (Dashboards)", tab_config: "⚙️ الإعدادات (Config)", btn_logout: "🚪 العودة للبداية",
-                lbl_product: "العلامة (Brand) - اختياري", lbl_sku: "رمز الوحدة (SKU)", lbl_sku2: "المادة الفعالة (Molecules Name)", lbl_supplier: "المورد", lbl_milestone: "المرحلة", lbl_status: "الحالة الوصفية", lbl_notes: "ملاحظات",
+                lbl_product: "العلامة (Brand) - اختياري", lbl_sku: "رمز الوحدة (SKU)", lbl_sku2: "المادة الفعالة (Molecules Name)", lbl_supplier: "المورد - اختياري", lbl_milestone: "المرحلة", lbl_status: "الحالة الوصفية", lbl_notes: "ملاحظات",
                 lbl_start: "تاريخ البدء المخطط", lbl_end: "تاريخ الانتهاء المخطط", lbl_actual_start: "بدء فعلي", lbl_actual_end: "نهاية فعلية",
                 btn_add_forecast: "➕ إضافة لخطة التوقع", btn_export: "📊 تصدير إكسيل", btn_save: "💾 حفظ التحديث", btn_cancel: "إلغاء", btn_add_sm: "إضافة", 
                 th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_status: "الحالة", th_start: "بداية مخططة", th_end: "نهاية مخططة", th_actual_start: "بدء فعلي", th_actual_end: "نهاية فعلية", th_progress: "حالة (Auto)", th_view: "المسار", th_action: "إجراءات",
@@ -595,7 +637,7 @@
             },
             en: {
                 tab_tracker: "📝 Forecast", tab_followup: "🔄 Actuals Update", tab_reports: "📊 Dashboards", tab_config: "⚙️ Config", btn_logout: "🚪 Start Screen",
-                lbl_product: "Brand Name - Optional", lbl_sku: "SKU", lbl_sku2: "Molecules Name", lbl_supplier: "Supplier", lbl_milestone: "Milestone", lbl_status: "Desc Status", lbl_notes: "Notes",
+                lbl_product: "Brand Name - Optional", lbl_sku: "SKU", lbl_sku2: "Molecules Name", lbl_supplier: "Supplier - Optional", lbl_milestone: "Milestone", lbl_status: "Desc Status", lbl_notes: "Notes",
                 lbl_start: "Plan Start", lbl_end: "Plan End", lbl_actual_start: "Actual Start", lbl_actual_end: "Actual End",
                 btn_add_forecast: "➕ Add Forecast", btn_export: "📊 Export Excel", btn_save: "💾 Save Update", btn_cancel: "Cancel", btn_add_sm: "Add", 
                 th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_status: "Status", th_start: "Plan Start", th_end: "Plan End", th_actual_start: "Actual Start", th_actual_end: "Actual End", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
@@ -614,11 +656,11 @@
             document.getElementById('langBtn').innerText = currentLang === 'ar' ? 'English' : 'العربية';
             document.querySelectorAll('[data-i18n]').forEach(elem => { const key = elem.getAttribute('data-i18n'); if (translations[currentLang][key]) elem.innerText = translations[currentLang][key]; });
             updateWelcomeText(); applyHiddenLists(); renderConfig(); renderTables(); if(document.getElementById('view-reports').classList.contains('active')) renderDashboards();
+            updateIdentifier();
         }
 
         window.toggleLanguage = () => { currentLang = currentLang === 'ar' ? 'en' : 'ar'; localStorage.setItem('pharmaLang', currentLang); applyLanguage(); }
 
-        // --- Firebase Listener ---
         onSnapshot(globalDocRef, (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
@@ -649,7 +691,9 @@
             if(document.getElementById('productName')) document.getElementById('productName').required = false; 
             if(document.getElementById('skuName')) document.getElementById('skuName').required = !hiddenCoreLists.includes('skus');
             if(document.getElementById('sku2Name')) document.getElementById('sku2Name').required = true; 
-            if(document.getElementById('supplierName')) document.getElementById('supplierName').required = !hiddenCoreLists.includes('suppliers');
+            
+            if(document.getElementById('supplierName')) document.getElementById('supplierName').required = false;
+            
             if(document.getElementById('milestone')) document.getElementById('milestone').required = !hiddenCoreLists.includes('milestones');
             if(document.getElementById('mainStatus')) document.getElementById('mainStatus').required = !hiddenCoreLists.includes('status');
         }
@@ -687,7 +731,7 @@
             fillDropdown('productName', confProducts, currentLang === 'ar' ? 'بدون علامة تجارية' : 'No Brand', true);
             fillDropdown('skuName', confSkus, selectText); 
             fillDropdown('sku2Name', confSkus2, selectText); 
-            fillDropdown('supplierName', confSuppliers, selectText); 
+            fillDropdown('supplierName', confSuppliers, selectText, true); 
             fillDropdown('milestone', confMilestones, selectText); 
             fillDropdown('mainStatus', confStatus, selectText);
             
@@ -709,7 +753,43 @@
             popList('suppliersList', confSuppliers, 'suppliers'); 
             popList('milestonesList', confMilestones, 'milestones'); 
             popList('statusList', confStatus, 'status');
+            
+            updateIdentifier(); 
         }
+
+        function updateIdentifier() {
+            const molEl = document.getElementById('sku2Name');
+            const brandEl = document.getElementById('productName');
+            const skuEl = document.getElementById('skuName');
+            
+            const mol = molEl && molEl.selectedIndex > 0 ? molEl.options[molEl.selectedIndex].text : '';
+            const brand = brandEl && brandEl.selectedIndex > 0 ? brandEl.options[brandEl.selectedIndex].text : '';
+            const sku = skuEl && skuEl.selectedIndex > 0 ? skuEl.options[skuEl.selectedIndex].text : '';
+            
+            const parts = [];
+            if(mol) parts.push(mol);
+            if(brand) parts.push(brand);
+            if(sku) parts.push(sku);
+            
+            document.getElementById('fullIdentifier').value = parts.join(' - ');
+        }
+        
+        ['sku2Name', 'productName', 'skuName'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('change', updateIdentifier);
+        });
+
+        window.clearFormFields = () => {
+            const selects = ['sku2Name', 'productName', 'skuName', 'supplierName', 'milestone', 'mainStatus'];
+            selects.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = ''; 
+            });
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('notesInput').value = '';
+            document.getElementById('fullIdentifier').value = '';
+        };
 
         window.addConfig = (type) => {
             const map = { 
@@ -766,12 +846,34 @@
             });
         }
 
+        // ==========================================
+        // التعديل: الاعتماد الكلي على النهاية الفعلية لحالة الاكتمال
+        // ==========================================
         function calculateProgressStatus(pStart, pEnd, aStart, aEnd) {
-            const t = translations[currentLang]; const today = new Date(); today.setHours(0,0,0,0);
-            const planStart = new Date(pStart); const planEnd = new Date(pEnd);
+            const t = translations[currentLang]; 
+            const today = new Date(); today.setHours(0,0,0,0);
+            const planStart = new Date(pStart); 
+            const planEnd = new Date(pEnd);
+            
             let rawStatus = "Not Started";
-            if (aEnd) rawStatus = "Completed"; else if (aStart) { if (today > planEnd) rawStatus = "Delayed"; else rawStatus = "In Progress"; } else { if (today > planEnd || today >= planStart) rawStatus = "Delayed"; else rawStatus = "Not Started"; }
-            const map = { 'Completed': { text: t.status_completed, class: 'bg-completed' }, 'In Progress': { text: t.status_progress, class: 'bg-progress' }, 'Delayed': { text: t.status_delayed, class: 'bg-delayed' }, 'Not Started': { text: t.status_notstarted, class: 'bg-notstarted' } };
+            
+            // بمجرد وصول/إدخال تاريخ النهاية الفعلي، تعتبر المرحلة مكتملة وانتهت
+            if (aEnd && aEnd.trim() !== "") { 
+                rawStatus = "Completed"; 
+            } else if (aStart && aStart.trim() !== "") { 
+                if (today > planEnd) rawStatus = "Delayed"; 
+                else rawStatus = "In Progress"; 
+            } else { 
+                if (today > planEnd || today >= planStart) rawStatus = "Delayed"; 
+                else rawStatus = "Not Started"; 
+            }
+            
+            const map = { 
+                'Completed': { text: t.status_completed, class: 'bg-completed' }, 
+                'In Progress': { text: t.status_progress, class: 'bg-progress' }, 
+                'Delayed': { text: t.status_delayed, class: 'bg-delayed' }, 
+                'Not Started': { text: t.status_notstarted, class: 'bg-notstarted' } 
+            };
             return { raw: rawStatus, text: map[rawStatus].text, class: map[rawStatus].class };
         }
 
@@ -790,15 +892,62 @@
             if(new Date(pStart) > new Date(pEnd)) return alert(translations[currentLang].msg_date_err);
             if (!hiddenCoreLists.includes('skus') && checkDateOverlap(product, sku, pStart, pEnd)) return alert(translations[currentLang].msg_overlap);
 
-            milestonesData.push({ 
+            pendingForecastData = { 
                 productName: product, skuName: sku, sku2Name: sku2,
                 supplier: document.getElementById('supplierName').value || "", 
                 milestone: ms, mainStatus: document.getElementById('mainStatus').value || "", 
                 startDate: pStart, endDate: pEnd, notes: document.getElementById('notesInput').value, 
                 actualStartDate: "", actualEndDate: "" 
-            });
-            setDoc(globalDocRef, { milestonesData }, { merge: true }); this.reset();
+            };
+            
+            showConfirmModal(pendingForecastData);
         });
+
+        window.showConfirmModal = (data) => {
+            document.getElementById('confIdText').innerText = document.getElementById('fullIdentifier').value;
+            document.getElementById('confMileText').innerText = translateItem(data.milestone);
+            document.getElementById('confDatesText').innerText = `${data.startDate} ➔ ${data.endDate}`;
+            
+            const records = milestonesData.filter(i => i.productName === data.productName && i.skuName === data.skuName);
+            let html = ''; 
+            let highestCompletedIdx = -1;
+            const cMilestones = Array.isArray(confMilestones) ? confMilestones : Object.values(confMilestones || {});
+            
+            cMilestones.forEach((m, idx) => {
+                let sClass = '', icon = idx + 1;
+                const rec = records.find(r => r.milestone === m);
+                if (rec && calculateProgressStatus(rec.startDate, rec.endDate, rec.actualStartDate, rec.actualEndDate).raw === 'Completed') {
+                    sClass = 'completed'; icon = '✓';
+                    highestCompletedIdx = Math.max(highestCompletedIdx, idx);
+                }
+                if (m === data.milestone) { sClass = 'active'; } 
+                html += `<div class="step ${sClass}"><div class="step-icon">${icon}</div><div class="step-label">${translateItem(m)}</div></div>`;
+            });
+            
+            let targetIdx = cMilestones.indexOf(data.milestone);
+            let progressPercent = 0;
+            if (cMilestones.length > 1 && targetIdx > 0) progressPercent = (targetIdx / (cMilestones.length - 1)) * 83.33;
+            
+            const lineDir = currentLang === 'ar' ? 'right' : 'left';
+            document.getElementById('confirmStepperContainer').innerHTML = `<div style="position: absolute; top: 20px; ${lineDir}: 8.33%; height: 4px; background-color: #1e293b; width: 83.33%; z-index: 1;"></div><div class="progress-line" style="${lineDir}: 8.33%; width: ${progressPercent}%; z-index: 2; background-color: var(--accent-blue); box-shadow: 0 0 12px var(--accent-blue);"></div>${html}`;
+            
+            document.getElementById('confirmModal').classList.add('active');
+        };
+
+        window.confirmSaveForecast = () => {
+            if(pendingForecastData) {
+                milestonesData.push(pendingForecastData);
+                setDoc(globalDocRef, { milestonesData }, { merge: true });
+                clearFormFields();
+                closeConfirmModal();
+                pendingForecastData = null;
+            }
+        };
+
+        window.closeConfirmModal = () => {
+            document.getElementById('confirmModal').classList.remove('active');
+            pendingForecastData = null;
+        };
 
         function renderTables() {
             const tbodyTracker = document.getElementById('tableBodyTracker'); tbodyTracker.innerHTML = '';
@@ -810,19 +959,21 @@
                 const dispBrand = item.productName ? translateItem(item.productName) : '-';
                 
                 tbodyTracker.innerHTML += `<tr>
-                    <td class="col_products"><strong style="color:var(--accent-blue)">${dispBrand}</strong></td>
-                    <td class="col_skus">${item.skuName||'-'}</td>
                     <td class="col_skus2">${item.sku2Name||'-'}</td>
+                    <td class="col_skus">${item.skuName||'-'}</td>
+                    <td class="col_products"><strong style="color:var(--accent-blue)">${dispBrand}</strong></td>
                     <td class="col_suppliers">${item.supplier||'-'}</td>
                     <td class="col_milestones">${translateItem(item.milestone) || '-'}</td>
                     <td class="nowrap-col">${item.startDate}</td><td class="nowrap-col">${item.endDate}</td>
                     <td><button class="action-btn btn-track" onclick="drawVisualTracker(${actIdx}, this)">👁️ المسار</button></td>
                 </tr>`;
 
+                // تم تعديل الترتيب هنا أيضاً ليتطابق مع (Molecules Name -> SKU -> Brand -> Supplier -> Milestone)
                 tbodyFollowup.innerHTML += `<tr>
-                    <td class="col_products"><strong style="color:var(--accent-blue)">${dispBrand}</strong></td>
-                    <td class="col_skus">${item.skuName||'-'}</td>
                     <td class="col_skus2">${item.sku2Name||'-'}</td>
+                    <td class="col_skus">${item.skuName||'-'}</td>
+                    <td class="col_products"><strong style="color:var(--accent-blue)">${dispBrand}</strong></td>
+                    <td class="col_suppliers">${item.supplier||'-'}</td>
                     <td class="col_milestones">${translateItem(item.milestone) || '-'}</td>
                     <td class="nowrap-col">${item.startDate}</td><td class="nowrap-col" style="color:#60a5fa; font-weight:bold;">${item.actualStartDate||'--'}</td>
                     <td class="nowrap-col">${item.endDate}</td><td class="nowrap-col" style="color:#60a5fa; font-weight:bold;">${item.actualEndDate||'--'}</td>
@@ -839,10 +990,8 @@
             
             const item = milestonesData[actIdx];
             document.getElementById('visualTrackerCard').style.display = 'block';
-            let titleText = item.productName ? translateItem(item.productName) + ' | ' : '';
-            titleText += `SKU: ${item.skuName}`;
-            if(item.sku2Name) titleText += ` | Molecule: ${item.sku2Name}`;
-            document.getElementById('trackerTitle').innerText = titleText;
+            
+            document.getElementById('trackerTitle').innerText = "مسار الدواء: " + getFullProductName(item);
             
             const records = milestonesData.filter(i => i.productName === item.productName && i.skuName === item.skuName);
             let html = ''; let highestCompletedIdx = -1; let activeIdx = -1;
@@ -879,7 +1028,7 @@
         window.openUpdateModal = (idx) => {
             const item = milestonesData[idx];
             document.getElementById('editIndex').value = idx;
-            document.getElementById('editItemName').value = (item.productName ? item.productName + " - " : "") + (item.skuName || "");
+            document.getElementById('editItemName').value = getFullProductName(item);
             document.getElementById('editMilestone').value = translateItem(item.milestone||'-');
             document.getElementById('editPlanStart').value = item.startDate; document.getElementById('editPlanEnd').value = item.endDate;     
             document.getElementById('editActualStart').value = item.actualStartDate || ''; document.getElementById('editActualEnd').value = item.actualEndDate || '';
@@ -903,12 +1052,24 @@
             } 
         };
 
+        window.exportForecastExcel = () => {
+            if (milestonesData.length === 0) return;
+            let csv = currentLang === 'ar' ? "\uFEFFالمادة الفعالة (Molecules Name),رمز الوحدة (SKU),العلامة التجارية,المورد,المعرف المدمج (Product),المرحلة,الحالة الوصفية,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,ملاحظات\n" : "\uFEFFMolecules Name,SKU,Brand,Supplier,Product Identifier,Milestone,Status,Plan Start,Plan End,Notes\n";
+            milestonesData.forEach(i => {
+                const fullId = getFullProductName(i);
+                csv += `"${i.sku2Name || ''}","${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${fullId}","${translateItem(i.milestone)}","${translateItem(i.mainStatus)}","${i.startDate}","${i.endDate}","${i.notes || ''}"\n`; 
+            });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = `Forecast_Export_${new Date().toISOString().split('T')[0]}.csv`; link.click();
+        };
+
         window.exportToExcel = () => {
             if (milestonesData.length === 0) return;
-            let csv = currentLang === 'ar' ? "\uFEFFالعلامة التجارية,رمز الوحدة (SKU),المادة الفعالة (Molecules Name),المورد,المرحلة,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,تاريخ البدء الفعلي,تاريخ الانتهاء الفعلي,حالة التنفيذ\n" : "\uFEFFBrand,SKU,Molecules Name,Supplier,Milestone,Plan Start,Plan End,Actual Start,Actual End,Execution Status\n";
+            // تم ترتيب تصدير الإكسيل لشاشة Follow-up ليعكس الترتيب الجديد أيضاً
+            let csv = currentLang === 'ar' ? "\uFEFFالمادة الفعالة (Molecules Name),رمز الوحدة (SKU),العلامة التجارية (Brand),المورد,المرحلة,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,تاريخ البدء الفعلي,تاريخ الانتهاء الفعلي,حالة التنفيذ\n" : "\uFEFFMolecules Name,SKU,Brand,Supplier,Milestone,Plan Start,Plan End,Actual Start,Actual End,Execution Status\n";
             milestonesData.forEach(i => { 
                 const sInfo = calculateProgressStatus(i.startDate, i.endDate, i.actualStartDate, i.actualEndDate);
-                csv += `"${translateItem(i.productName||'')}","${i.skuName || ''}","${i.sku2Name || ''}","${translateItem(i.supplier) || ''}","${translateItem(i.milestone)}","${i.startDate}","${i.endDate}","${i.actualStartDate || ''}","${i.actualEndDate || ''}","${sInfo.text}"\n`; 
+                csv += `"${i.sku2Name || ''}","${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${translateItem(i.milestone)}","${i.startDate}","${i.endDate}","${i.actualStartDate || ''}","${i.actualEndDate || ''}","${sInfo.text}"\n`; 
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
             link.download = `Actuals_Export_${new Date().toISOString().split('T')[0]}.csv`; link.click();
@@ -923,7 +1084,7 @@
             let itemCounts = {};
             milestonesData.forEach(i => {
                 if(calculateProgressStatus(i.startDate, i.endDate, i.actualStartDate, i.actualEndDate).raw === chartStatusState.currentStatus) {
-                    let key = (i.productName ? `${i.productName} (${i.skuName})` : i.skuName) || '-';
+                    let key = getFullProductName(i); 
                     itemCounts[key] = (itemCounts[key] || 0) + 1;
                 }
             });
@@ -942,7 +1103,7 @@
                 const stat = calculateProgressStatus(i.startDate, i.endDate, i.actualStartDate, i.actualEndDate).raw;
                 if(stat==='Completed') comp++; else if(stat==='Delayed') { del++; delayedStats[i.milestone] = (delayedStats[i.milestone]||0)+1; } else if(stat==='In Progress') prog++; else not++;
                 
-                let bKey = (i.productName ? `${i.productName} (${i.skuName})` : i.skuName) || '-';
+                let bKey = getFullProductName(i);
                 if(!brandStats[bKey]) brandStats[bKey] = {t:0, c:0};
                 brandStats[bKey].t++; if(stat==='Completed') brandStats[bKey].c++;
                 if(i.supplier) { if(!supplierStats[i.supplier]) supplierStats[i.supplier] = {t:0, c:0}; supplierStats[i.supplier].t++; if(stat==='Completed') supplierStats[i.supplier].c++; }
