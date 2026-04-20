@@ -215,7 +215,6 @@
         body.hide-skus #fg_skus, body.hide-skus .col_skus, body.hide-skus #card_skus { display: none !important; }
         body.hide-skus2 #fg_skus2, body.hide-skus2 .col_skus2, body.hide-skus2 #card_skus2 { display: none !important; }
         body.hide-suppliers #fg_suppliers, body.hide-suppliers .col_suppliers, body.hide-suppliers #card_suppliers { display: none !important; }
-        body.hide-status #fg_status, body.hide-status .col_status, body.hide-status #card_status { display: none !important; }
         body.hide-milestones #fg_milestones, body.hide-milestones .col_milestones, body.hide-milestones #card_milestones { display: none !important; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -390,10 +389,7 @@
                             <label data-i18n="lbl_milestone">المرحلة (Milestone)</label>
                             <select id="milestone" required></select>
                         </div>
-                        <div class="form-group" id="fg_status">
-                            <label data-i18n="lbl_status">الحالة الوصفية (Main Status)</label>
-                            <select id="mainStatus" required></select>
-                        </div>
+                        
                         <div class="form-group">
                             <label data-i18n="lbl_launch">تاريخ الإطلاق المخطط (Launch Date)</label>
                             <input type="date" id="launchDateInput" required>
@@ -564,17 +560,6 @@
                                 <ul class="config-list" id="suppliersList"></ul>
                             </div>
                         </div>
-                        
-                        <div class="config-card" id="card_status">
-                            <div class="config-summary" onclick="toggleConfig(this)">
-                                <h3 data-i18n="conf_s_title">الحالات الوصفية Status (A-Z)</h3>
-                                <span class="caret">▼</span>
-                            </div>
-                            <div class="config-content">
-                                <div style="display:flex; gap:10px;"><input type="text" id="newStatusInput"><button class="btn-add-sm" onclick="addConfig('status')" data-i18n="btn_add_sm">إضافة</button></div>
-                                <ul class="config-list" id="statusList"></ul>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="config-column">
@@ -613,7 +598,7 @@
         const globalDocRef = doc(db, "pharma_erp", "global_data");
 
         let milestonesData = [];
-        let confProducts = [], confSkus = [], confSkus2 = [], confSuppliers = [], confMilestones = [], confStatus = [];
+        let confProducts = [], confSkus = [], confSkus2 = [], confSuppliers = [], confMilestones = [];
         let hiddenCoreLists = [];
         let pendingForecastData = null; 
         
@@ -622,8 +607,8 @@
         
         const ADMIN_PWD = "1234";
 
-        const coreListsMap = { 'products': 'conf_p_title', 'skus': 'conf_sku_title', 'skus2': 'conf_sku2_title', 'suppliers': 'conf_supplier_title', 'status': 'conf_s_title', 'milestones': 'conf_m_title' };
-        const corePropsMap = { 'products': 'productName', 'skus': 'skuName', 'skus2': 'sku2Name', 'suppliers': 'supplier', 'status': 'mainStatus', 'milestones': 'milestone' };
+        const coreListsMap = { 'products': 'conf_p_title', 'skus': 'conf_sku_title', 'skus2': 'conf_sku2_title', 'suppliers': 'conf_supplier_title', 'milestones': 'conf_m_title' };
+        const corePropsMap = { 'products': 'productName', 'skus': 'skuName', 'skus2': 'sku2Name', 'suppliers': 'supplier', 'milestones': 'milestone' };
 
         function sortArray(arr) { 
             if (!arr) return [];
@@ -679,27 +664,27 @@
         const translations = {
             ar: {
                 tab_maindash: "🏠 اللوحة الرئيسية", tab_tracker: "📝 الخطة (Forecast)", tab_followup: "🔄 التحديث الفعلي (Actuals)", tab_reports: "📊 لوحات القياس (Dashboards)", tab_config: "⚙️ الإعدادات (Config)", btn_logout: "🚪 العودة للبداية",
-                lbl_product: "العلامة (Brand) - اختياري", lbl_sku: "رمز الوحدة (SKU)", lbl_sku2: "المادة الفعالة (Molecules Name)", lbl_supplier: "المورد - اختياري", lbl_milestone: "المرحلة", lbl_status: "الحالة الوصفية", lbl_notes: "ملاحظات",
+                lbl_product: "العلامة (Brand) - اختياري", lbl_sku: "رمز الوحدة (SKU)", lbl_sku2: "المادة الفعالة (Molecules Name)", lbl_supplier: "المورد - اختياري", lbl_milestone: "المرحلة", lbl_notes: "ملاحظات",
                 lbl_launch: "تاريخ الإطلاق المخطط", lbl_actual_launch: "تاريخ الإطلاق الفعلي",
                 btn_add_forecast: "➕ إضافة لخطة التوقع", btn_export: "📊 تصدير إكسيل", btn_save: "💾 حفظ التحديث", btn_cancel: "إلغاء", btn_add_sm: "إضافة", 
-                th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_status: "الحالة", th_launch: "تاريخ الإطلاق", th_actual_launch: "إطلاق فعلي", th_progress: "حالة التنفيذ", th_view: "المسار", th_action: "إجراءات",
+                th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_launch: "تاريخ الإطلاق", th_actual_launch: "إطلاق فعلي", th_progress: "حالة التنفيذ", th_view: "المسار", th_action: "إجراءات",
                 followup_title: "شاشة المتابعة والتحديث الفعلي", followup_desc: "تحديث التواريخ وحالة التنفيذ الأوتوماتيكية أو اليدوية.", edit_title: "تحديث حالة الإنجاز (Update Status)",
                 dash_brands: "إجمالي السجلات الموثقة", dash_miles: "المراحل المخططة", dash_completed: "المراحل المكتملة", dash_delayed: "المراحل المتأخرة", chart_status_title: "توزيع حالات الإنجاز (اضغط للتفاصيل)", chart_brand_title: "نسبة الإنجاز", chart_delayed_title: "المراحل الأكثر تأخراً (Bottlenecks)", chart_supplier_title: "توزيع الإنجاز حسب المورد",
                 timeline_title: "الجدول الزمني للأصناف حسب المرحلة (Quarterly)",
-                conf_p_title: "العلامات التجارية Brands (A-Z)", conf_sku_title: "رموز الوحدات SKUs (A-Z)", conf_sku2_title: "المواد الفعالة Molecules Names (A-Z)", conf_supplier_title: "الموردين (A-Z)", conf_m_title: "المراحل (ترتيب مخصص)", conf_s_title: "الحالات الوصفية (A-Z)",
+                conf_p_title: "العلامات التجارية Brands (A-Z)", conf_sku_title: "رموز الوحدات SKUs (A-Z)", conf_sku2_title: "المواد الفعالة Molecules Names (A-Z)", conf_supplier_title: "الموردين (A-Z)", conf_m_title: "المراحل (ترتيب مخصص)",
                 status_notstarted: "لم يبدأ ⏳", status_delayed: "متأخر 🚨", status_progress: "قيد التنفيذ 🔄", status_completed: "مكتمل ✅",
                 msg_dup_conf: "الإدخال موجود مسبقاً!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! المرحلة موجودة لنفس العلامة والـ SKU.", msg_cannot_delete: "عذراً، لا يمكن الحذف! هذه القائمة مستخدمة."
             },
             en: {
                 tab_maindash: "🏠 Main Dashboard", tab_tracker: "📝 Forecast", tab_followup: "🔄 Actuals Update", tab_reports: "📊 Dashboards", tab_config: "⚙️ Config", btn_logout: "🚪 Start Screen",
-                lbl_product: "Brand Name - Optional", lbl_sku: "SKU", lbl_sku2: "Molecules Name", lbl_supplier: "Supplier - Optional", lbl_milestone: "Milestone", lbl_status: "Desc Status", lbl_notes: "Notes",
+                lbl_product: "Brand Name - Optional", lbl_sku: "SKU", lbl_sku2: "Molecules Name", lbl_supplier: "Supplier - Optional", lbl_milestone: "Milestone", lbl_notes: "Notes",
                 lbl_launch: "Launch Date", lbl_actual_launch: "Actual Launch Date",
                 btn_add_forecast: "➕ Add Forecast", btn_export: "📊 Export Excel", btn_save: "💾 Save Update", btn_cancel: "Cancel", btn_add_sm: "Add", 
-                th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_status: "Status", th_launch: "Launch Date", th_actual_launch: "Actual Launch", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
+                th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_launch: "Launch Date", th_actual_launch: "Actual Launch", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
                 followup_title: "Actuals vs Forecast Update", followup_desc: "Update dates and execution status here.", edit_title: "Update Progress Status",
                 dash_brands: "Total Logged Items", dash_miles: "Planned Milestones", dash_completed: "Completed Milestones", dash_delayed: "Delayed Milestones", chart_status_title: "Status Distribution (Click to Drilldown)", chart_brand_title: "Completion %", chart_delayed_title: "Most Delayed Milestones (Bottlenecks)", chart_supplier_title: "Completion Distribution by Supplier",
                 timeline_title: "Timeline of Items by Milestone (Quarterly)",
-                conf_p_title: "Brands (A-Z)", conf_sku_title: "SKUs (A-Z)", conf_sku2_title: "Molecules Names (A-z)", conf_supplier_title: "Suppliers (A-Z)", conf_m_title: "Milestones (Custom)", conf_s_title: "Desc Status (A-Z)",
+                conf_p_title: "Brands (A-Z)", conf_sku_title: "SKUs (A-Z)", conf_sku2_title: "Molecules Names (A-z)", conf_supplier_title: "Suppliers (A-Z)", conf_m_title: "Milestones (Custom)",
                 status_notstarted: "Not Started ⏳", status_delayed: "Delayed 🚨", status_progress: "In Progress 🔄", status_completed: "Completed ✅",
                 msg_dup_conf: "Entry already exists!", msg_dup_mile: "Alert: Milestone already exists for this Brand and SKU.", msg_cannot_delete: "Sorry, cannot delete! This list is used."
             }
@@ -730,7 +715,6 @@
                 confSkus2 = sortArray(data.confSkus2 || data.skus2 || []); 
                 confSuppliers = sortArray(data.confSuppliers || data.suppliers || []);
                 confMilestones = data.confMilestones || data.milestones || []; 
-                confStatus = sortArray(data.confStatus || data.status || []);
                 
                 hiddenCoreLists = data.hiddenCoreLists || [];
             }
@@ -753,7 +737,6 @@
             if(document.getElementById('skuName')) document.getElementById('skuName').required = !hiddenCoreLists.includes('skus');
             if(document.getElementById('supplierName')) document.getElementById('supplierName').required = false;
             if(document.getElementById('milestone')) document.getElementById('milestone').required = !hiddenCoreLists.includes('milestones');
-            if(document.getElementById('mainStatus')) document.getElementById('mainStatus').required = !hiddenCoreLists.includes('status');
         }
 
         function fillDropdown(elementId, dataArray, defaultText, allowEmpty = false) {
@@ -791,7 +774,6 @@
             fillDropdown('sku2Name', confSkus2, selectText); 
             fillDropdown('supplierName', confSuppliers, selectText, true); 
             fillDropdown('milestone', confMilestones, selectText); 
-            fillDropdown('mainStatus', confStatus, selectText);
             
             const popList = (id, arr, type) => {
                 const el = document.getElementById(id); if(!el) return; el.innerHTML = '';
@@ -810,7 +792,6 @@
             popList('skus2List', confSkus2, 'skus2'); 
             popList('suppliersList', confSuppliers, 'suppliers'); 
             popList('milestonesList', confMilestones, 'milestones'); 
-            popList('statusList', confStatus, 'status');
             
             updateIdentifier(); 
         }
@@ -836,7 +817,7 @@
         });
 
         window.clearFormFields = () => {
-            const selects = ['productName', 'skuName', 'supplierName', 'milestone', 'mainStatus'];
+            const selects = ['productName', 'skuName', 'supplierName', 'milestone'];
             selects.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = ''; 
@@ -852,8 +833,7 @@
                 skus:{arr:confSkus, id:'newSkuInput', sort:true}, 
                 skus2:{arr:confSkus2, id:'newSku2Input', sort:true}, 
                 suppliers:{arr:confSuppliers, id:'newSupplierInput', sort:true}, 
-                milestones:{arr:confMilestones, id:'newMilestoneInput', sort:false}, 
-                status:{arr:confStatus, id:'newStatusInput', sort:true} 
+                milestones:{arr:confMilestones, id:'newMilestoneInput', sort:false} 
             };
             const input = document.getElementById(map[type].id); const val = input.value.trim();
             
@@ -871,7 +851,7 @@
         }
         
         window.deleteConfigItem = (type, idx) => {
-            const mapArrays = { 'products': confProducts, 'skus': confSkus, 'skus2': confSkus2, 'suppliers': confSuppliers, 'milestones': confMilestones, 'status': confStatus };
+            const mapArrays = { 'products': confProducts, 'skus': confSkus, 'skus2': confSkus2, 'suppliers': confSuppliers, 'milestones': confMilestones };
             let targetArray = Array.isArray(mapArrays[type]) ? mapArrays[type] : Object.values(mapArrays[type] || {});
             
             const targetProp = corePropsMap[type]; 
@@ -893,7 +873,6 @@
             setDoc(globalDocRef, { confMilestones: currentArr }, {merge:true});
         }
 
-        // دالة التقييم الجديدة: تعتمد فقط على Launch Date
         function calculateProgressStatus(launchD, actualLaunchD, manualStatus) {
             const t = translations[currentLang]; 
             
@@ -919,7 +898,7 @@
                 if (today > lDate) {
                     rawStatus = "Delayed";
                 } else {
-                    rawStatus = "In Progress"; // أو يمكن إرجاع Not Started كبديل إذا أردت
+                    rawStatus = "In Progress";
                 }
             }
             
@@ -948,7 +927,7 @@
             pendingForecastData = { 
                 productName: product, skuName: sku, sku2Name: sku2,
                 supplier: document.getElementById('supplierName').value || "", 
-                milestone: ms, mainStatus: document.getElementById('mainStatus').value || "", 
+                milestone: ms, 
                 launchDate: pLaunch, notes: document.getElementById('notesInput').value, 
                 actualLaunchDate: "", manualExecutionStatus: "Auto"
             };
@@ -969,7 +948,6 @@
             cMilestones.forEach((m, idx) => {
                 let sClass = '', icon = idx + 1;
                 const rec = records.find(r => r.milestone === m);
-                // مراعاة التوافقية لبيانات فايربيس المرفوعة سابقاً
                 const lDate = rec ? (rec.launchDate || rec.endDate) : '';
                 const aLaunch = rec ? (rec.actualLaunchDate || rec.actualEndDate) : '';
                 
@@ -1124,11 +1102,11 @@
 
         window.exportForecastExcel = () => {
             if (milestonesData.length === 0) return;
-            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),العلامة التجارية,المورد,المعرف المدمج (Product),المرحلة,الحالة الوصفية,تاريخ الإطلاق,ملاحظات\n" : "\uFEFFSKU,Brand,Supplier,Product Identifier,Milestone,Status,Launch Date,Notes\n";
+            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),العلامة التجارية,المورد,المعرف المدمج (Product),المرحلة,تاريخ الإطلاق,ملاحظات\n" : "\uFEFFSKU,Brand,Supplier,Product Identifier,Milestone,Launch Date,Notes\n";
             milestonesData.forEach(i => {
                 const fullId = getFullProductName(i);
                 const lDate = i.launchDate || i.endDate || '';
-                csv += `"${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${fullId}","${translateItem(i.milestone)}","${translateItem(i.mainStatus)}","${lDate}","${i.notes || ''}"\n`; 
+                csv += `"${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${fullId}","${translateItem(i.milestone)}","${lDate}","${i.notes || ''}"\n`; 
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
             link.download = `Forecast_Export_${new Date().toISOString().split('T')[0]}.csv`; link.click();
