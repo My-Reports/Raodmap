@@ -290,32 +290,65 @@
     <div id="updateModal" class="modal-overlay">
         <div class="modal-content">
             <h3 data-i18n="edit_title" style="color: var(--accent-blue); margin-top:0; border-bottom:1px solid #334155; padding-bottom:15px;">تحديث حالة الإنجاز (Update Status)</h3>
-            <div class="form-grid" style="margin-top: 20px;">
-                <div class="form-group" style="grid-column: 1 / -1; display:flex; flex-direction:row; gap:10px;">
-                    <input type="text" id="editItemName" readonly style="background-color: rgba(0,0,0,0.5); color: var(--accent-blue); font-weight:bold; flex:1.5; cursor: not-allowed; border: 1px solid #334155;">
-                    <input type="text" id="editMilestone" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; flex:1; cursor: not-allowed; border: 1px solid #334155;">
-                </div>
+            
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
                 
-                <div class="form-group" style="padding: 15px; border: 1px dashed #334155; border-radius: 8px;">
-                    <h4 style="margin:0 0 10px 0; color:var(--text-main); font-size:0.9rem;">بيانات الخطة (Forecast) - <span style="color:#ef4444; font-size:0.8rem;">للقراءة فقط 🔒</span></h4>
-                    <label>تاريخ الإطلاق المخطط (Launch Date)</label>
-                    <input type="date" id="editLaunchDate" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
-                </div>
-                
-                <div class="form-group" style="padding: 15px; border: 1px dashed #3b82f6; border-radius: 8px; background: rgba(59, 130, 246, 0.05);">
-                    <h4 style="margin:0 0 10px 0; color:#60a5fa; font-size:0.9rem;">البيانات الفعلية (Actuals) والتحديث</h4>
+                <div style="padding: 15px; border: 1px dashed #334155; border-radius: 8px; display: flex; flex-direction: column; gap: 15px;">
+                    <h4 style="margin:0; color:var(--text-main); font-size:0.95rem;">بيانات الصنف الأساسية (Item Details) - <span style="color:#ef4444; font-size:0.8rem;">للقراءة فقط 🔒</span></h4>
                     
-                    <label style="color: var(--accent-blue);">حالة التنفيذ (Status Override)</label>
-                    <select id="editExecutionStatus" style="margin-bottom: 10px; border-color: rgba(59, 130, 246, 0.5); font-weight:bold; background-color: rgba(15, 23, 42, 0.9);">
-                        <option value="Auto">🤖 احتساب تلقائي ذكي (Auto)</option>
-                        <option value="Completed">✅ مكتمل (Completed)</option>
-                        <option value="In Progress">🔄 قيد التنفيذ (In Progress)</option>
-                        <option value="Delayed">🚨 متأخر (Delayed)</option>
-                        <option value="Not Started">⏳ لم يبدأ (Not Started)</option>
-                    </select>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="form-group">
+                            <label>رمز الوحدة (SKU)</label>
+                            <input type="text" id="editSku" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
+                        </div>
+                        <div class="form-group">
+                            <label>العلامة التجارية (Brand)</label>
+                            <input type="text" id="editBrand" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
+                        </div>
+                    </div>
 
-                    <label>تاريخ الإطلاق الفعلي (Actual Launch Date)</label>
-                    <input type="date" id="editActualLaunchDate" style="border-color: rgba(59, 130, 246, 0.5);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="form-group">
+                            <label>المورد (Supplier)</label>
+                            <input type="text" id="editSupplier" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
+                        </div>
+                        <div class="form-group">
+                            <label>المرحلة (Milestone)</label>
+                            <input type="text" id="editMilestone" readonly style="background-color: rgba(0,0,0,0.5); color: #60a5fa; cursor: not-allowed; border-color: #334155; font-weight: bold;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>تاريخ الإطلاق المخطط (Launch Date)</label>
+                        <input type="date" id="editLaunchDate" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
+                    </div>
+                </div>
+                
+                <div style="padding: 15px; border: 1px dashed #3b82f6; border-radius: 8px; background: rgba(59, 130, 246, 0.05); display: flex; flex-direction: column; gap: 15px;">
+                    <h4 style="margin:0; color:#60a5fa; font-size:0.95rem;">التحديث الفعلي (Actuals Update)</h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="form-group">
+                            <label style="color: var(--accent-blue);">حالة التنفيذ (Status Override)</label>
+                            <select id="editExecutionStatus" style="border-color: rgba(59, 130, 246, 0.5); font-weight:bold; background-color: rgba(15, 23, 42, 0.9);">
+                                <option value="Auto">🤖 احتساب تلقائي ذكي (Auto)</option>
+                                <option value="Completed">✅ مكتمل (Completed)</option>
+                                <option value="In Progress">🔄 قيد التنفيذ (In Progress)</option>
+                                <option value="Delayed">🚨 متأخر (Delayed)</option>
+                                <option value="Not Started">⏳ لم يبدأ (Not Started)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>تاريخ الإطلاق الفعلي (Actual Launch Date)</label>
+                            <input type="date" id="editActualLaunchDate" style="border-color: rgba(59, 130, 246, 0.5);">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ملاحظات (Notes) - <span style="color:#10b981; font-size:0.8rem;">قابل للتعديل ✏️</span></label>
+                        <input type="text" id="editNotes" placeholder="أضف أو عدل الملاحظات هنا..." style="border-color: rgba(59, 130, 246, 0.5);">
+                    </div>
                 </div>
             </div>
             
@@ -1090,15 +1123,24 @@
         };
         window.closeTracker = () => { document.getElementById('visualTrackerCard').style.display = 'none'; };
 
+        // ================= تحديث بيانات نافذة المتابعة Modal =================
         window.openUpdateModal = (idx) => {
             const item = milestonesData[idx];
             document.getElementById('editIndex').value = idx;
-            document.getElementById('editItemName').value = getFullProductName(item);
+            
+            // بيانات الصنف (Read-Only)
+            document.getElementById('editSku').value = item.skuName || '-';
+            document.getElementById('editBrand').value = item.productName ? translateItem(item.productName) : '-';
+            document.getElementById('editSupplier').value = item.supplier ? translateItem(item.supplier) : '-';
             document.getElementById('editMilestone').value = translateItem(item.milestone||'-');
             document.getElementById('editLaunchDate').value = item.launchDate || item.endDate || ''; 
-            document.getElementById('editActualLaunchDate').value = item.actualLaunchDate || item.actualEndDate || '';
             
+            // التحديث الفعلي (Editable)
+            document.getElementById('editActualLaunchDate').value = item.actualLaunchDate || item.actualEndDate || '';
             document.getElementById('editExecutionStatus').value = item.manualExecutionStatus || 'Auto';
+            
+            // حقل الملاحظات الجديد
+            document.getElementById('editNotes').value = item.notes || '';
             
             document.getElementById('updateModal').classList.add('active');
         };
@@ -1108,9 +1150,11 @@
             const idx = parseInt(document.getElementById('editIndex').value);
             const aLaunch = document.getElementById('editActualLaunchDate').value; 
             const manStatus = document.getElementById('editExecutionStatus').value;
+            const updatedNotes = document.getElementById('editNotes').value;
             
             milestonesData[idx].actualLaunchDate = aLaunch;
             milestonesData[idx].manualExecutionStatus = manStatus;
+            milestonesData[idx].notes = updatedNotes; // حفظ الملاحظات الجديدة
             
             setDoc(globalDocRef, { milestonesData }, { merge: true }); 
             closeUpdateModal();
@@ -1138,13 +1182,13 @@
 
         window.exportToExcel = () => {
             if (milestonesData.length === 0) return;
-            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),العلامة التجارية (Brand),المورد,المرحلة,تاريخ الإطلاق,الإطلاق الفعلي,حالة التنفيذ\n" : "\uFEFFSKU,Brand,Supplier,Milestone,Launch Date,Actual Launch,Execution Status\n";
+            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),العلامة التجارية (Brand),المورد,المرحلة,تاريخ الإطلاق,الإطلاق الفعلي,حالة التنفيذ,الملاحظات\n" : "\uFEFFSKU,Brand,Supplier,Milestone,Launch Date,Actual Launch,Execution Status,Notes\n";
             milestonesData.forEach(i => { 
                 const lDate = i.launchDate || i.endDate || '';
                 const aLaunch = i.actualLaunchDate || i.actualEndDate || '';
                 const sInfo = calculateProgressStatus(lDate, aLaunch, i.manualExecutionStatus);
 
-                csv += `"${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${translateItem(i.milestone)}","${lDate}","${aLaunch}","${sInfo.text}"\n`; 
+                csv += `"${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${translateItem(i.milestone)}","${lDate}","${aLaunch}","${sInfo.text}","${i.notes || ''}"\n`; 
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
             link.download = `Actuals_Export_${new Date().toISOString().split('T')[0]}.csv`; link.click();
@@ -1175,10 +1219,8 @@
             });
         }
 
-        // ================= الدالة المحدثة كلياً لإنشاء المخطط الزمني =================
         window.renderTimeline = () => {
             const container = document.getElementById('timelineContainer');
-            // استخراج وتصفية الداتا للأصناف التي تحتوي على تاريخ
             const filteredData = milestonesData.filter(d => d.launchDate || d.endDate);
 
             if (filteredData.length === 0) {
@@ -1209,14 +1251,13 @@
 
             const sortedKeys = Object.keys(grouped).sort();
 
-            // ألوان "خرافية" مضيئة
             const themes = [
-                { grad: 'linear-gradient(135deg, #FF6B6B, #FF8E53)', solid: '#FF6B6B' }, // Coral
-                { grad: 'linear-gradient(135deg, #00C6FF, #0072FF)', solid: '#00C6FF' }, // Blue
-                { grad: 'linear-gradient(135deg, #43E97B, #38F9D7)', solid: '#43E97B' }, // Green
-                { grad: 'linear-gradient(135deg, #F9D423, #FF4E50)', solid: '#F9D423' }, // Yellow/Red
-                { grad: 'linear-gradient(135deg, #B12A5B, #FF8177)', solid: '#B12A5B' }, // Pink/Rose
-                { grad: 'linear-gradient(135deg, #8E2DE2, #4A00E0)', solid: '#8E2DE2' }  // Purple
+                { grad: 'linear-gradient(135deg, #FF6B6B, #FF8E53)', solid: '#FF6B6B' }, 
+                { grad: 'linear-gradient(135deg, #00C6FF, #0072FF)', solid: '#00C6FF' }, 
+                { grad: 'linear-gradient(135deg, #43E97B, #38F9D7)', solid: '#43E97B' }, 
+                { grad: 'linear-gradient(135deg, #F9D423, #FF4E50)', solid: '#F9D423' }, 
+                { grad: 'linear-gradient(135deg, #B12A5B, #FF8177)', solid: '#B12A5B' }, 
+                { grad: 'linear-gradient(135deg, #8E2DE2, #4A00E0)', solid: '#8E2DE2' }  
             ];
 
             let html = '<div class="timeline-wrapper"><div class="timeline-track"></div>';
@@ -1228,7 +1269,6 @@
                 let itemsHtml = group.items.map(item => {
                     const title = getFullProductName(item);
                     const ms = translateItem(item.milestone);
-                    // الكرت الزجاجي مع إدخال متغيرات الألوان
                     return `
                         <div class="timeline-item" style="--card-theme: ${theme.grad}; --card-color: ${theme.solid};">
                             <div class="ti-content">
@@ -1239,7 +1279,6 @@
                     `;
                 }).join('');
                 
-                // إضافة العقدة مع التواريخ والمؤشرات
                 html += `
                     <div class="timeline-node" style="--node-color: ${theme.solid};">
                         <div class="timeline-date" style="background: ${theme.grad}; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">${group.label}</div>
