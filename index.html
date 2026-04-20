@@ -247,7 +247,7 @@
             <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #334155;">
                 <p style="margin: 5px 0;"><strong>Product:</strong> <span id="confIdText" style="color: var(--accent-blue); font-weight: bold;"></span></p>
                 <p style="margin: 5px 0;"><strong>المرحلة (Milestone):</strong> <span id="confMileText" style="color: #60a5fa;"></span></p>
-                <p style="margin: 5px 0;"><strong>الجدول الزمني:</strong> <span id="confDatesText" style="color: #10b981;"></span></p>
+                <p style="margin: 5px 0;"><strong>تاريخ الإطلاق:</strong> <span id="confDatesText" style="color: #10b981;"></span></p>
             </div>
             
             <div class="stepper" id="confirmStepperContainer" style="margin-bottom: 35px; overflow-x: auto;"></div>
@@ -261,7 +261,7 @@
 
     <div id="updateModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 data-i18n="edit_title" style="color: var(--accent-blue); margin-top:0; border-bottom:1px solid #334155; padding-bottom:15px;">تحديث تواريخ الإنجاز (Update Dates)</h3>
+            <h3 data-i18n="edit_title" style="color: var(--accent-blue); margin-top:0; border-bottom:1px solid #334155; padding-bottom:15px;">تحديث حالة الإنجاز (Update Status)</h3>
             <div class="form-grid" style="margin-top: 20px;">
                 <div class="form-group" style="grid-column: 1 / -1; display:flex; flex-direction:row; gap:10px;">
                     <input type="text" id="editItemName" readonly style="background-color: rgba(0,0,0,0.5); color: var(--accent-blue); font-weight:bold; flex:1.5; cursor: not-allowed; border: 1px solid #334155;">
@@ -270,10 +270,8 @@
                 
                 <div class="form-group" style="padding: 15px; border: 1px dashed #334155; border-radius: 8px;">
                     <h4 style="margin:0 0 10px 0; color:var(--text-main); font-size:0.9rem;">بيانات الخطة (Forecast) - <span style="color:#ef4444; font-size:0.8rem;">للقراءة فقط 🔒</span></h4>
-                    <label>تاريخ البدء المخطط (Plan Start)</label>
-                    <input type="date" id="editPlanStart" readonly style="margin-bottom: 10px; background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
-                    <label>تاريخ الانتهاء المخطط (Plan End)</label>
-                    <input type="date" id="editPlanEnd" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
+                    <label>تاريخ الإطلاق المخطط (Launch Date)</label>
+                    <input type="date" id="editLaunchDate" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
                 </div>
                 
                 <div class="form-group" style="padding: 15px; border: 1px dashed #3b82f6; border-radius: 8px; background: rgba(59, 130, 246, 0.05);">
@@ -288,15 +286,13 @@
                         <option value="Not Started">⏳ لم يبدأ (Not Started)</option>
                     </select>
 
-                    <label>تاريخ البدء الفعلي (Actual Start)</label>
-                    <input type="date" id="editActualStart" style="margin-bottom: 10px; border-color: rgba(59, 130, 246, 0.5);">
-                    <label>تاريخ الانتهاء الفعلي (Actual End)</label>
-                    <input type="date" id="editActualEnd" style="border-color: rgba(59, 130, 246, 0.5);">
+                    <label>تاريخ الإطلاق الفعلي (Actual Launch Date)</label>
+                    <input type="date" id="editActualLaunchDate" style="border-color: rgba(59, 130, 246, 0.5);">
                 </div>
             </div>
             
             <div style="margin-top: 15px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-                * الوضع التلقائي يقوم بمقارنة تاريخ اليوم مع التواريخ المخططة لإعطاء حالة (متأخر) بدقة في حال تجاوز المدة.
+                * الوضع التلقائي يقوم بمقارنة تاريخ اليوم مع تاريخ الإطلاق لإعطاء حالة (متأخر) بدقة في حال تجاوز المدة.
             </div>
             
             <input type="hidden" id="editIndex">
@@ -399,12 +395,8 @@
                             <select id="mainStatus" required></select>
                         </div>
                         <div class="form-group">
-                            <label data-i18n="lbl_start">تاريخ البدء المخطط</label>
-                            <input type="date" id="startDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="lbl_end">تاريخ الانتهاء المخطط</label>
-                            <input type="date" id="endDate" required>
+                            <label data-i18n="lbl_launch">تاريخ الإطلاق المخطط (Launch Date)</label>
+                            <input type="date" id="launchDateInput" required>
                         </div>
                         
                         <div class="form-group" style="grid-column: 1 / -1;">
@@ -443,8 +435,7 @@
                                 <th class="col_products"><span data-i18n="th_product">العلامة</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_suppliers"><span data-i18n="th_supplier">المورد</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
                                 <th class="col_milestones"><span data-i18n="th_milestone">المرحلة</span> <input type="text" class="filter-input filter-tracker" onkeyup="applyFilters('dataTableTracker', 'filter-tracker')"></th>
-                                <th class="nowrap-col" data-i18n="th_start">البداية المخططة</th>
-                                <th class="nowrap-col" data-i18n="th_end">النهاية المخططة</th>
+                                <th class="nowrap-col" data-i18n="th_launch">تاريخ الإطلاق</th>
                                 <th data-i18n="th_view">متابعة المسار</th>
                             </tr>
                         </thead>
@@ -472,10 +463,8 @@
                                 <th class="col_products"><span data-i18n="th_product">العلامة</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="col_suppliers"><span data-i18n="th_supplier">المورد</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
                                 <th class="col_milestones"><span data-i18n="th_milestone">المرحلة</span> <input type="text" class="filter-input filter-fw" onkeyup="applyFilters('dataTableFollowup', 'filter-fw')"></th>
-                                <th class="nowrap-col" data-i18n="th_start">البداية المخططة</th>
-                                <th class="nowrap-col" data-i18n="th_actual_start" style="color:#60a5fa">بدء فعلي</th>
-                                <th class="nowrap-col" data-i18n="th_end">نهاية مخططة</th>
-                                <th class="nowrap-col" data-i18n="th_actual_end" style="color:#60a5fa">نهاية فعلية</th>
+                                <th class="nowrap-col" data-i18n="th_launch">تاريخ الإطلاق</th>
+                                <th class="nowrap-col" data-i18n="th_actual_launch" style="color:#60a5fa">إطلاق فعلي</th>
                                 <th data-i18n="th_progress">حالة التنفيذ</th>
                                 <th data-i18n="th_action">إجراءات</th>
                             </tr>
@@ -642,7 +631,6 @@
             return items.filter(Boolean).sort((a,b) => String(a).localeCompare(String(b))); 
         }
 
-        // الترتيب الجديد للمسمى المدمج بعد إزالة Molecules Name
         function getFullProductName(item) {
             return [item.skuName, item.productName].filter(Boolean).join(' - ') || '-';
         }
@@ -692,28 +680,28 @@
             ar: {
                 tab_maindash: "🏠 اللوحة الرئيسية", tab_tracker: "📝 الخطة (Forecast)", tab_followup: "🔄 التحديث الفعلي (Actuals)", tab_reports: "📊 لوحات القياس (Dashboards)", tab_config: "⚙️ الإعدادات (Config)", btn_logout: "🚪 العودة للبداية",
                 lbl_product: "العلامة (Brand) - اختياري", lbl_sku: "رمز الوحدة (SKU)", lbl_sku2: "المادة الفعالة (Molecules Name)", lbl_supplier: "المورد - اختياري", lbl_milestone: "المرحلة", lbl_status: "الحالة الوصفية", lbl_notes: "ملاحظات",
-                lbl_start: "تاريخ البدء المخطط", lbl_end: "تاريخ الانتهاء المخطط", lbl_actual_start: "بدء فعلي", lbl_actual_end: "نهاية فعلية",
+                lbl_launch: "تاريخ الإطلاق المخطط", lbl_actual_launch: "تاريخ الإطلاق الفعلي",
                 btn_add_forecast: "➕ إضافة لخطة التوقع", btn_export: "📊 تصدير إكسيل", btn_save: "💾 حفظ التحديث", btn_cancel: "إلغاء", btn_add_sm: "إضافة", 
-                th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_status: "الحالة", th_start: "بداية مخططة", th_end: "نهاية مخططة", th_actual_start: "بدء فعلي", th_actual_end: "نهاية فعلية", th_progress: "حالة التنفيذ", th_view: "المسار", th_action: "إجراءات",
-                followup_title: "شاشة المتابعة والتحديث الفعلي", followup_desc: "تحديث التواريخ وحالة التنفيذ الأوتوماتيكية أو اليدوية.", edit_title: "تحديث تواريخ وحالة الإنجاز",
+                th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_status: "الحالة", th_launch: "تاريخ الإطلاق", th_actual_launch: "إطلاق فعلي", th_progress: "حالة التنفيذ", th_view: "المسار", th_action: "إجراءات",
+                followup_title: "شاشة المتابعة والتحديث الفعلي", followup_desc: "تحديث التواريخ وحالة التنفيذ الأوتوماتيكية أو اليدوية.", edit_title: "تحديث حالة الإنجاز (Update Status)",
                 dash_brands: "إجمالي السجلات الموثقة", dash_miles: "المراحل المخططة", dash_completed: "المراحل المكتملة", dash_delayed: "المراحل المتأخرة", chart_status_title: "توزيع حالات الإنجاز (اضغط للتفاصيل)", chart_brand_title: "نسبة الإنجاز", chart_delayed_title: "المراحل الأكثر تأخراً (Bottlenecks)", chart_supplier_title: "توزيع الإنجاز حسب المورد",
                 timeline_title: "الجدول الزمني للأصناف حسب المرحلة (Quarterly)",
                 conf_p_title: "العلامات التجارية Brands (A-Z)", conf_sku_title: "رموز الوحدات SKUs (A-Z)", conf_sku2_title: "المواد الفعالة Molecules Names (A-Z)", conf_supplier_title: "الموردين (A-Z)", conf_m_title: "المراحل (ترتيب مخصص)", conf_s_title: "الحالات الوصفية (A-Z)",
                 status_notstarted: "لم يبدأ ⏳", status_delayed: "متأخر 🚨", status_progress: "قيد التنفيذ 🔄", status_completed: "مكتمل ✅",
-                msg_dup_conf: "الإدخال موجود مسبقاً!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! المرحلة موجودة لنفس العلامة والـ SKU.", msg_overlap: "تنبيه: يوجد تداخل في التواريخ المخططة مع مرحلة أخرى لنفس الـ SKU.", msg_date_err: "خطأ: البداية المخططة يجب أن تكون قبل النهاية!", msg_cannot_delete: "عذراً، لا يمكن الحذف! هذه القائمة مستخدمة."
+                msg_dup_conf: "الإدخال موجود مسبقاً!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! المرحلة موجودة لنفس العلامة والـ SKU.", msg_cannot_delete: "عذراً، لا يمكن الحذف! هذه القائمة مستخدمة."
             },
             en: {
                 tab_maindash: "🏠 Main Dashboard", tab_tracker: "📝 Forecast", tab_followup: "🔄 Actuals Update", tab_reports: "📊 Dashboards", tab_config: "⚙️ Config", btn_logout: "🚪 Start Screen",
                 lbl_product: "Brand Name - Optional", lbl_sku: "SKU", lbl_sku2: "Molecules Name", lbl_supplier: "Supplier - Optional", lbl_milestone: "Milestone", lbl_status: "Desc Status", lbl_notes: "Notes",
-                lbl_start: "Plan Start", lbl_end: "Plan End", lbl_actual_start: "Actual Start", lbl_actual_end: "Actual End",
+                lbl_launch: "Launch Date", lbl_actual_launch: "Actual Launch Date",
                 btn_add_forecast: "➕ Add Forecast", btn_export: "📊 Export Excel", btn_save: "💾 Save Update", btn_cancel: "Cancel", btn_add_sm: "Add", 
-                th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_status: "Status", th_start: "Plan Start", th_end: "Plan End", th_actual_start: "Actual Start", th_actual_end: "Actual End", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
-                followup_title: "Actuals vs Forecast Update", followup_desc: "Update dates and execution status here.", edit_title: "Update Progress Dates & Status",
+                th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_status: "Status", th_launch: "Launch Date", th_actual_launch: "Actual Launch", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
+                followup_title: "Actuals vs Forecast Update", followup_desc: "Update dates and execution status here.", edit_title: "Update Progress Status",
                 dash_brands: "Total Logged Items", dash_miles: "Planned Milestones", dash_completed: "Completed Milestones", dash_delayed: "Delayed Milestones", chart_status_title: "Status Distribution (Click to Drilldown)", chart_brand_title: "Completion %", chart_delayed_title: "Most Delayed Milestones (Bottlenecks)", chart_supplier_title: "Completion Distribution by Supplier",
                 timeline_title: "Timeline of Items by Milestone (Quarterly)",
                 conf_p_title: "Brands (A-Z)", conf_sku_title: "SKUs (A-Z)", conf_sku2_title: "Molecules Names (A-z)", conf_supplier_title: "Suppliers (A-Z)", conf_m_title: "Milestones (Custom)", conf_s_title: "Desc Status (A-Z)",
                 status_notstarted: "Not Started ⏳", status_delayed: "Delayed 🚨", status_progress: "In Progress 🔄", status_completed: "Completed ✅",
-                msg_dup_conf: "Entry already exists!", msg_dup_mile: "Alert: Milestone already exists for this Brand and SKU.", msg_overlap: "Alert: Planned dates overlap with another milestone for this SKU.", msg_date_err: "Error: Plan Start date must be before Plan End date!", msg_cannot_delete: "Sorry, cannot delete! This list is used."
+                msg_dup_conf: "Entry already exists!", msg_dup_mile: "Alert: Milestone already exists for this Brand and SKU.", msg_cannot_delete: "Sorry, cannot delete! This list is used."
             }
         };
 
@@ -800,7 +788,6 @@
             
             fillDropdown('productName', confProducts, currentLang === 'ar' ? 'بدون علامة تجارية' : 'No Brand', true);
             fillDropdown('skuName', confSkus, selectText); 
-            // sku2Name يتم تعبئته فقط إذا كان موجوداً (وهو غير موجود إلا في الإعدادات)
             fillDropdown('sku2Name', confSkus2, selectText); 
             fillDropdown('supplierName', confSuppliers, selectText, true); 
             fillDropdown('milestone', confMilestones, selectText); 
@@ -854,8 +841,7 @@
                 const el = document.getElementById(id);
                 if (el) el.value = ''; 
             });
-            document.getElementById('startDate').value = '';
-            document.getElementById('endDate').value = '';
+            document.getElementById('launchDateInput').value = '';
             document.getElementById('notesInput').value = '';
             document.getElementById('fullIdentifier').value = '';
         };
@@ -907,15 +893,8 @@
             setDoc(globalDocRef, { confMilestones: currentArr }, {merge:true});
         }
 
-        function checkDateOverlap(product, sku, newStart, newEnd, excludeIndex = -1) {
-            const start = new Date(newStart); const end = new Date(newEnd);
-            return milestonesData.some((item, idx) => {
-                if (idx === excludeIndex || item.productName !== product || item.skuName !== sku) return false;
-                return (start <= new Date(item.endDate) && end >= new Date(item.startDate));
-            });
-        }
-
-        function calculateProgressStatus(pStart, pEnd, aStart, aEnd, manualStatus) {
+        // دالة التقييم الجديدة: تعتمد فقط على Launch Date
+        function calculateProgressStatus(launchD, actualLaunchD, manualStatus) {
             const t = translations[currentLang]; 
             
             if (manualStatus && manualStatus !== 'Auto') {
@@ -929,26 +908,18 @@
             }
 
             const today = new Date(); today.setHours(0,0,0,0);
-            const planStart = new Date(pStart); planStart.setHours(0,0,0,0);
-            const planEnd = new Date(pEnd); planEnd.setHours(0,0,0,0);
+            const lDate = new Date(launchD); lDate.setHours(0,0,0,0);
             
             let rawStatus = "Not Started";
             
-            if (aEnd && aEnd.trim() !== "") { 
+            if (actualLaunchD && actualLaunchD.trim() !== "") { 
                 rawStatus = "Completed"; 
             } 
-            else if (aStart && aStart.trim() !== "") { 
-                if (today > planEnd) {
-                    rawStatus = "Delayed";
-                } else {
-                    rawStatus = "In Progress";
-                }
-            } 
             else { 
-                if (today > planStart) {
+                if (today > lDate) {
                     rawStatus = "Delayed";
                 } else {
-                    rawStatus = "Not Started"; 
+                    rawStatus = "In Progress"; // أو يمكن إرجاع Not Started كبديل إذا أردت
                 }
             }
             
@@ -965,7 +936,6 @@
             e.preventDefault();
             const product = document.getElementById('productName').value || ""; 
             const sku = document.getElementById('skuName').value || "";
-            // إبقاء المتغير فارغ ليتوافق مع هيكلية Firebase السابقة إذا تطلب الأمر
             const sku2 = "";
             const ms = document.getElementById('milestone').value || "";
             
@@ -973,17 +943,14 @@
                 if(milestonesData.some(i => i.productName === product && i.skuName === sku && i.milestone === ms)) return alert(translations[currentLang].msg_dup_mile);
             }
             
-            const pStart = document.getElementById('startDate').value; const pEnd = document.getElementById('endDate').value;
-            if(new Date(pStart) > new Date(pEnd)) return alert(translations[currentLang].msg_date_err);
-            if (!hiddenCoreLists.includes('skus') && checkDateOverlap(product, sku, pStart, pEnd)) return alert(translations[currentLang].msg_overlap);
+            const pLaunch = document.getElementById('launchDateInput').value;
 
             pendingForecastData = { 
                 productName: product, skuName: sku, sku2Name: sku2,
                 supplier: document.getElementById('supplierName').value || "", 
                 milestone: ms, mainStatus: document.getElementById('mainStatus').value || "", 
-                startDate: pStart, endDate: pEnd, notes: document.getElementById('notesInput').value, 
-                actualStartDate: "", actualEndDate: "",
-                manualExecutionStatus: "Auto"
+                launchDate: pLaunch, notes: document.getElementById('notesInput').value, 
+                actualLaunchDate: "", manualExecutionStatus: "Auto"
             };
             
             showConfirmModal(pendingForecastData);
@@ -992,7 +959,7 @@
         window.showConfirmModal = (data) => {
             document.getElementById('confIdText').innerText = document.getElementById('fullIdentifier').value;
             document.getElementById('confMileText').innerText = translateItem(data.milestone);
-            document.getElementById('confDatesText').innerText = `${data.startDate} ➔ ${data.endDate}`;
+            document.getElementById('confDatesText').innerText = data.launchDate;
             
             const records = milestonesData.filter(i => i.productName === data.productName && i.skuName === data.skuName);
             let html = ''; 
@@ -1002,7 +969,11 @@
             cMilestones.forEach((m, idx) => {
                 let sClass = '', icon = idx + 1;
                 const rec = records.find(r => r.milestone === m);
-                if (rec && calculateProgressStatus(rec.startDate, rec.endDate, rec.actualStartDate, rec.actualEndDate, rec.manualExecutionStatus).raw === 'Completed') {
+                // مراعاة التوافقية لبيانات فايربيس المرفوعة سابقاً
+                const lDate = rec ? (rec.launchDate || rec.endDate) : '';
+                const aLaunch = rec ? (rec.actualLaunchDate || rec.actualEndDate) : '';
+                
+                if (rec && calculateProgressStatus(lDate, aLaunch, rec.manualExecutionStatus).raw === 'Completed') {
                     sClass = 'completed'; icon = '✓';
                     highestCompletedIdx = Math.max(highestCompletedIdx, idx);
                 }
@@ -1041,7 +1012,10 @@
             
             milestonesData.slice().reverse().forEach((item, index) => {
                 const actIdx = milestonesData.length - 1 - index;
-                const sInfo = calculateProgressStatus(item.startDate, item.endDate, item.actualStartDate, item.actualEndDate, item.manualExecutionStatus);
+                const lDate = item.launchDate || item.endDate || '';
+                const aLaunch = item.actualLaunchDate || item.actualEndDate || '';
+
+                const sInfo = calculateProgressStatus(lDate, aLaunch, item.manualExecutionStatus);
                 const dispBrand = item.productName ? translateItem(item.productName) : '-';
                 
                 tbodyTracker.innerHTML += `<tr>
@@ -1049,7 +1023,7 @@
                     <td class="col_products"><strong style="color:var(--accent-blue)">${dispBrand}</strong></td>
                     <td class="col_suppliers">${item.supplier||'-'}</td>
                     <td class="col_milestones">${translateItem(item.milestone) || '-'}</td>
-                    <td class="nowrap-col">${item.startDate}</td><td class="nowrap-col">${item.endDate}</td>
+                    <td class="nowrap-col">${lDate}</td>
                     <td><button class="action-btn btn-track" onclick="drawVisualTracker(${actIdx}, this)">👁️ المسار</button></td>
                 </tr>`;
 
@@ -1058,8 +1032,8 @@
                     <td class="col_products"><strong style="color:var(--accent-blue)">${dispBrand}</strong></td>
                     <td class="col_suppliers">${item.supplier||'-'}</td>
                     <td class="col_milestones">${translateItem(item.milestone) || '-'}</td>
-                    <td class="nowrap-col">${item.startDate}</td><td class="nowrap-col" style="color:#60a5fa; font-weight:bold;">${item.actualStartDate||'--'}</td>
-                    <td class="nowrap-col">${item.endDate}</td><td class="nowrap-col" style="color:#60a5fa; font-weight:bold;">${item.actualEndDate||'--'}</td>
+                    <td class="nowrap-col">${lDate}</td>
+                    <td class="nowrap-col" style="color:#60a5fa; font-weight:bold;">${aLaunch||'--'}</td>
                     <td><span class="badge ${sInfo.class}">${sInfo.text}</span></td>
                     <td class="nowrap-col"><button class="action-btn btn-edit" onclick="openUpdateModal(${actIdx})">✏️ تحديث</button> <button class="action-btn btn-delete" onclick="deleteRecord(${actIdx})">✖ حذف</button></td>
                 </tr>`;
@@ -1083,13 +1057,19 @@
             
             cMilestones.forEach((m, idx) => {
                 const rec = records.find(r => r.milestone === m);
-                if(rec && calculateProgressStatus(rec.startDate, rec.endDate, rec.actualStartDate, rec.actualEndDate, rec.manualExecutionStatus).raw === 'Completed') highestCompletedIdx = Math.max(highestCompletedIdx, idx);
+                const lDate = rec ? (rec.launchDate || rec.endDate) : '';
+                const aLaunch = rec ? (rec.actualLaunchDate || rec.actualEndDate) : '';
+
+                if(rec && calculateProgressStatus(lDate, aLaunch, rec.manualExecutionStatus).raw === 'Completed') highestCompletedIdx = Math.max(highestCompletedIdx, idx);
             });
 
             cMilestones.forEach((m, idx) => {
                 let sClass = '', icon = idx + 1;
                 const rec = records.find(r => r.milestone === m);
-                let stat = rec ? calculateProgressStatus(rec.startDate, rec.endDate, rec.actualStartDate, rec.actualEndDate, rec.manualExecutionStatus).raw : 'Not Started';
+                const lDate = rec ? (rec.launchDate || rec.endDate) : '';
+                const aLaunch = rec ? (rec.actualLaunchDate || rec.actualEndDate) : '';
+
+                let stat = rec ? calculateProgressStatus(lDate, aLaunch, rec.manualExecutionStatus).raw : 'Not Started';
 
                 if (stat === 'Completed') { sClass = 'completed'; icon = '✓'; } 
                 else if (stat === 'In Progress' || stat === 'Delayed') { sClass = 'active'; activeIdx = idx; } 
@@ -1113,10 +1093,8 @@
             document.getElementById('editIndex').value = idx;
             document.getElementById('editItemName').value = getFullProductName(item);
             document.getElementById('editMilestone').value = translateItem(item.milestone||'-');
-            document.getElementById('editPlanStart').value = item.startDate; 
-            document.getElementById('editPlanEnd').value = item.endDate;     
-            document.getElementById('editActualStart').value = item.actualStartDate || ''; 
-            document.getElementById('editActualEnd').value = item.actualEndDate || '';
+            document.getElementById('editLaunchDate').value = item.launchDate || item.endDate || ''; 
+            document.getElementById('editActualLaunchDate').value = item.actualLaunchDate || item.actualEndDate || '';
             
             document.getElementById('editExecutionStatus').value = item.manualExecutionStatus || 'Auto';
             
@@ -1126,14 +1104,10 @@
         
         window.saveUpdate = () => {
             const idx = parseInt(document.getElementById('editIndex').value);
-            const aStart = document.getElementById('editActualStart').value; 
-            const aEnd = document.getElementById('editActualEnd').value;
+            const aLaunch = document.getElementById('editActualLaunchDate').value; 
             const manStatus = document.getElementById('editExecutionStatus').value;
             
-            if(aStart && aEnd && new Date(aStart) > new Date(aEnd)) return alert(currentLang === 'ar' ? "خطأ: البداية قبل النهاية!" : "Error!");
-            
-            milestonesData[idx].actualStartDate = aStart; 
-            milestonesData[idx].actualEndDate = aEnd;
+            milestonesData[idx].actualLaunchDate = aLaunch;
             milestonesData[idx].manualExecutionStatus = manStatus;
             
             setDoc(globalDocRef, { milestonesData }, { merge: true }); 
@@ -1150,10 +1124,11 @@
 
         window.exportForecastExcel = () => {
             if (milestonesData.length === 0) return;
-            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),العلامة التجارية,المورد,المعرف المدمج (Product),المرحلة,الحالة الوصفية,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,ملاحظات\n" : "\uFEFFSKU,Brand,Supplier,Product Identifier,Milestone,Status,Plan Start,Plan End,Notes\n";
+            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),العلامة التجارية,المورد,المعرف المدمج (Product),المرحلة,الحالة الوصفية,تاريخ الإطلاق,ملاحظات\n" : "\uFEFFSKU,Brand,Supplier,Product Identifier,Milestone,Status,Launch Date,Notes\n";
             milestonesData.forEach(i => {
                 const fullId = getFullProductName(i);
-                csv += `"${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${fullId}","${translateItem(i.milestone)}","${translateItem(i.mainStatus)}","${i.startDate}","${i.endDate}","${i.notes || ''}"\n`; 
+                const lDate = i.launchDate || i.endDate || '';
+                csv += `"${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${fullId}","${translateItem(i.milestone)}","${translateItem(i.mainStatus)}","${lDate}","${i.notes || ''}"\n`; 
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
             link.download = `Forecast_Export_${new Date().toISOString().split('T')[0]}.csv`; link.click();
@@ -1161,10 +1136,13 @@
 
         window.exportToExcel = () => {
             if (milestonesData.length === 0) return;
-            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),العلامة التجارية (Brand),المورد,المرحلة,تاريخ البدء المخطط,تاريخ الانتهاء المخطط,تاريخ البدء الفعلي,تاريخ الانتهاء الفعلي,حالة التنفيذ\n" : "\uFEFFSKU,Brand,Supplier,Milestone,Plan Start,Plan End,Actual Start,Actual End,Execution Status\n";
+            let csv = currentLang === 'ar' ? "\uFEFFرمز الوحدة (SKU),العلامة التجارية (Brand),المورد,المرحلة,تاريخ الإطلاق,الإطلاق الفعلي,حالة التنفيذ\n" : "\uFEFFSKU,Brand,Supplier,Milestone,Launch Date,Actual Launch,Execution Status\n";
             milestonesData.forEach(i => { 
-                const sInfo = calculateProgressStatus(i.startDate, i.endDate, i.actualStartDate, i.actualEndDate, i.manualExecutionStatus);
-                csv += `"${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${translateItem(i.milestone)}","${i.startDate}","${i.endDate}","${i.actualStartDate || ''}","${i.actualEndDate || ''}","${sInfo.text}"\n`; 
+                const lDate = i.launchDate || i.endDate || '';
+                const aLaunch = i.actualLaunchDate || i.actualEndDate || '';
+                const sInfo = calculateProgressStatus(lDate, aLaunch, i.manualExecutionStatus);
+
+                csv += `"${i.skuName || ''}","${translateItem(i.productName)||''}","${translateItem(i.supplier) || ''}","${translateItem(i.milestone)}","${lDate}","${aLaunch}","${sInfo.text}"\n`; 
             });
             const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
             link.download = `Actuals_Export_${new Date().toISOString().split('T')[0]}.csv`; link.click();
@@ -1178,7 +1156,10 @@
         function renderDrilldownChart() {
             let itemCounts = {};
             milestonesData.forEach(i => {
-                if(calculateProgressStatus(i.startDate, i.endDate, i.actualStartDate, i.actualEndDate, i.manualExecutionStatus).raw === chartStatusState.currentStatus) {
+                const lDate = i.launchDate || i.endDate || '';
+                const aLaunch = i.actualLaunchDate || i.actualEndDate || '';
+
+                if(calculateProgressStatus(lDate, aLaunch, i.manualExecutionStatus).raw === chartStatusState.currentStatus) {
                     let key = getFullProductName(i); 
                     itemCounts[key] = (itemCounts[key] || 0) + 1;
                 }
@@ -1221,7 +1202,7 @@
                 return;
             }
 
-            const filteredData = milestonesData.filter(d => d.milestone === selectedMs && d.endDate);
+            const filteredData = milestonesData.filter(d => d.milestone === selectedMs && (d.launchDate || d.endDate));
 
             if (filteredData.length === 0) {
                 container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--status-delayed); font-size: 1.1rem; margin-top: 50px;">لا توجد أصناف مبرمجة لهذه المرحلة حالياً.</div>`;
@@ -1230,7 +1211,8 @@
 
             const grouped = {};
             filteredData.forEach(item => {
-                const dateParts = item.endDate.split('-');
+                const dateStr = item.launchDate || item.endDate;
+                const dateParts = dateStr.split('-');
                 if (dateParts.length >= 2) {
                     const year = dateParts[0];
                     const month = parseInt(dateParts[1], 10);
@@ -1271,7 +1253,10 @@
             let comp=0, del=0, prog=0, not=0, brandStats={}, delayedStats={}, supplierStats={};
             
             milestonesData.forEach(i => {
-                const stat = calculateProgressStatus(i.startDate, i.endDate, i.actualStartDate, i.actualEndDate, i.manualExecutionStatus).raw;
+                const lDate = i.launchDate || i.endDate || '';
+                const aLaunch = i.actualLaunchDate || i.actualEndDate || '';
+                
+                const stat = calculateProgressStatus(lDate, aLaunch, i.manualExecutionStatus).raw;
                 if(stat==='Completed') comp++; else if(stat==='Delayed') { del++; delayedStats[i.milestone] = (delayedStats[i.milestone]||0)+1; } else if(stat==='In Progress') prog++; else not++;
                 
                 let bKey = getFullProductName(i);
