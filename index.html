@@ -170,22 +170,51 @@
         .chart-container { position: relative; height: 300px; width: 100%; display: flex; justify-content: center; margin-top: 10px;}
         .chart-container canvas { filter: drop-shadow(5px 15px 12px rgba(0,0,0,0.8)) drop-shadow(-2px -2px 4px rgba(255,255,255,0.1)); }
 
-        /* ------------------ Timeline Slicer & Visuals ------------------ */
-        .timeline-slicer-container { margin-bottom: 30px; text-align: center; padding: 0 10px;}
-        .timeline-slicer { background: var(--input-bg); border: 1px solid var(--accent-blue); color: white; padding: 12px 20px; border-radius: 8px; width: 100%; max-width: 500px; font-size: 1.05rem; box-shadow: 0 5px 15px rgba(0,0,0,0.3); outline: none; transition: border-color 0.3s; }
-        .timeline-slicer:focus { border-color: #3b82f6; }
+        /* ------------------ NEW Awesome Timeline Visuals ------------------ */
+        .timeline-scroll-area { overflow-x: auto; padding-bottom: 30px; min-height: 450px; display: flex; flex-direction: column; scrollbar-width: thin; scrollbar-color: var(--accent-blue) rgba(0,0,0,0.2); }
+        .timeline-wrapper { display: flex; position: relative; min-width: 100%; padding-top: 30px; padding-bottom: 20px; align-items: flex-start; flex: 1; }
+        .timeline-track { position: absolute; top: 93px; left: 0; width: 100%; height: 8px; background: linear-gradient(90deg, #FF6B6B, #00C6FF, #43E97B, #F9D423, #8E2DE2); z-index: 1; border-radius: 10px; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        .timeline-node { display: flex; flex-direction: column; align-items: center; width: 320px; flex-shrink: 0; z-index: 2; position: relative; }
         
-        .timeline-scroll-area { overflow-x: auto; padding-bottom: 20px; min-height: 400px; display: flex; flex-direction: column; }
-        .timeline-wrapper { display: flex; position: relative; min-width: 100%; padding-top: 30px; align-items: flex-start; flex: 1; }
-        .timeline-track { position: absolute; top: 43px; left: 0; width: 100%; height: 4px; background: rgba(6, 182, 212, 0.3); z-index: 1; }
-        .timeline-node { display: flex; flex-direction: column; align-items: center; width: 220px; flex-shrink: 0; z-index: 2; position: relative; }
-        .timeline-point { width: 30px; height: 30px; border-radius: 50%; background: var(--card-bg); border: 5px solid var(--accent-blue); box-shadow: 0 0 15px rgba(6, 182, 212, 0.6); z-index: 3; transition: 0.3s; }
-        .timeline-node:hover .timeline-point { transform: scale(1.2); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
-        .timeline-date { margin-top: 15px; font-weight: bold; color: #fff; background: linear-gradient(135deg, var(--accent-blue), #3b82f6); padding: 5px 15px; border-radius: 20px; box-shadow: 0 5px 10px rgba(0,0,0,0.4); text-shadow: 0 2px 4px rgba(0,0,0,0.3); font-size: 0.95rem; letter-spacing: 1px; }
-        .timeline-items { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; width: 90%; }
-        .timeline-item { background: rgba(15, 23, 42, 0.7); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); padding: 12px; text-align: center; font-size: 0.85rem; font-weight: bold; color: var(--text-main); line-height: 1.4; box-shadow: 0 4px 8px rgba(0,0,0,0.5); transition: 0.2s; border-right: 3px solid var(--accent-blue); word-break: break-word; }
-        html[dir="ltr"] .timeline-item { border-right: none; border-left: 3px solid var(--accent-blue); }
-        .timeline-item:hover { background: rgba(30, 41, 59, 0.9); border-color: rgba(6, 182, 212, 0.5); transform: translateY(-2px); }
+        .timeline-date { font-weight: 800; color: #fff; padding: 10px 30px; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); font-size: 1.15rem; letter-spacing: 1px; margin-bottom: 15px; position: relative; z-index: 3;}
+        .timeline-date::after {
+            content:''; position:absolute; bottom:-9px; left:50%; transform:translateX(-50%);
+            border-width:6px; border-style:solid;
+            border-color: var(--node-color) transparent transparent transparent;
+        }
+        
+        .timeline-point { width: 36px; height: 36px; border-radius: 50%; z-index: 3; border: 4px solid #fff; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .timeline-node:hover .timeline-point { transform: scale(1.3); }
+        
+        .timeline-items { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; width: 95%; }
+        
+        .timeline-item {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 12px;
+            padding: 18px 15px;
+            text-align: right;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            border-right: 4px solid var(--card-color);
+        }
+        html[dir="ltr"] .timeline-item { text-align: left; border-right: none; border-left: 4px solid var(--card-color); }
+        
+        .timeline-item::before {
+            content: ''; position: absolute; top: 0; right: 0; width: 0%; height: 100%;
+            background: var(--card-theme);
+            transition: 0.4s ease; opacity: 0; z-index: 0;
+        }
+        html[dir="ltr"] .timeline-item::before { right: auto; left: 0; }
+        
+        .timeline-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.6); border-color: var(--card-color);}
+        .timeline-item:hover::before { width: 100%; opacity: 0.15; }
+        
+        .ti-content { position: relative; z-index: 1; }
+        .ti-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; color: #f8fafc; line-height: 1.4;}
+        .ti-ms { font-size: 0.8rem; font-weight: 700; padding: 5px 10px; border-radius: 6px; display: inline-block; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
 
         /* Config Layout - Grouping */
         .config-page-layout { display: grid; grid-template-columns: 1fr; gap: 30px; align-items: start; }
@@ -349,11 +378,8 @@
 
             <div id="view-maindash" class="container view-section active">
                 <div class="card chart-card" style="margin-top: 10px; overflow: hidden; min-height: 70vh; display: flex; flex-direction: column;">
-                    <h3 data-i18n="timeline_title" style="text-align: center; margin-bottom: 25px; font-size: 1.3rem; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">الجدول الزمني للأصناف حسب المرحلة (Quarterly)</h3>
-                    <div class="timeline-slicer-container">
-                        <select id="timelineSlicer" class="timeline-slicer" onchange="renderTimeline()">
-                            </select>
-                    </div>
+                    <h3 data-i18n="timeline_title" style="text-align: center; margin-bottom: 25px; font-size: 1.4rem; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">الجدول الزمني المجمع للأصناف (Quarterly)</h3>
+                    
                     <div class="timeline-scroll-area">
                         <div id="timelineContainer"></div>
                     </div>
@@ -670,7 +696,7 @@
                 th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_launch: "تاريخ الإطلاق", th_actual_launch: "إطلاق فعلي", th_progress: "حالة التنفيذ", th_view: "المسار", th_action: "إجراءات",
                 followup_title: "شاشة المتابعة والتحديث الفعلي", followup_desc: "تحديث التواريخ وحالة التنفيذ الأوتوماتيكية أو اليدوية.", edit_title: "تحديث حالة الإنجاز (Update Status)",
                 dash_brands: "إجمالي السجلات الموثقة", dash_miles: "المراحل المخططة", dash_completed: "المراحل المكتملة", dash_delayed: "المراحل المتأخرة", chart_status_title: "توزيع حالات الإنجاز (اضغط للتفاصيل)", chart_brand_title: "نسبة الإنجاز", chart_delayed_title: "المراحل الأكثر تأخراً (Bottlenecks)", chart_supplier_title: "توزيع الإنجاز حسب المورد",
-                timeline_title: "الجدول الزمني للأصناف حسب المرحلة (Quarterly)",
+                timeline_title: "الجدول الزمني المجمع للأصناف (Quarterly)",
                 conf_p_title: "العلامات التجارية Brands (A-Z)", conf_sku_title: "رموز الوحدات SKUs (A-Z)", conf_sku2_title: "المواد الفعالة Molecules Names (A-Z)", conf_supplier_title: "الموردين (A-Z)", conf_m_title: "المراحل (ترتيب مخصص)",
                 status_notstarted: "لم يبدأ ⏳", status_delayed: "متأخر 🚨", status_progress: "قيد التنفيذ 🔄", status_completed: "مكتمل ✅",
                 msg_dup_conf: "الإدخال موجود مسبقاً!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! المرحلة موجودة لنفس العلامة والـ SKU.", msg_cannot_delete: "عذراً، لا يمكن الحذف! هذه القائمة مستخدمة."
@@ -683,7 +709,7 @@
                 th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_launch: "Launch Date", th_actual_launch: "Actual Launch", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
                 followup_title: "Actuals vs Forecast Update", followup_desc: "Update dates and execution status here.", edit_title: "Update Progress Status",
                 dash_brands: "Total Logged Items", dash_miles: "Planned Milestones", dash_completed: "Completed Milestones", dash_delayed: "Delayed Milestones", chart_status_title: "Status Distribution (Click to Drilldown)", chart_brand_title: "Completion %", chart_delayed_title: "Most Delayed Milestones (Bottlenecks)", chart_supplier_title: "Completion Distribution by Supplier",
-                timeline_title: "Timeline of Items by Milestone (Quarterly)",
+                timeline_title: "Consolidated Timeline of Items (Quarterly)",
                 conf_p_title: "Brands (A-Z)", conf_sku_title: "SKUs (A-Z)", conf_sku2_title: "Molecules Names (A-z)", conf_supplier_title: "Suppliers (A-Z)", conf_m_title: "Milestones (Custom)",
                 status_notstarted: "Not Started ⏳", status_delayed: "Delayed 🚨", status_progress: "In Progress 🔄", status_completed: "Completed ✅",
                 msg_dup_conf: "Entry already exists!", msg_dup_mile: "Alert: Milestone already exists for this Brand and SKU.", msg_cannot_delete: "Sorry, cannot delete! This list is used."
@@ -699,7 +725,6 @@
             updateWelcomeText(); applyHiddenLists(); renderConfig(); renderTables(); 
             if(document.getElementById('view-reports').classList.contains('active')) renderDashboards();
             if(document.getElementById('view-maindash').classList.contains('active')) renderTimeline();
-            updateTimelineSlicer();
             updateIdentifier();
         }
 
@@ -720,7 +745,6 @@
             }
             applyHiddenLists();
             renderConfig(); renderTables();
-            updateTimelineSlicer();
             if(document.getElementById('view-reports').classList.contains('active')) renderDashboards();
             if(document.getElementById('view-maindash').classList.contains('active')) renderTimeline();
         });
@@ -1151,73 +1175,75 @@
             });
         }
 
-        function updateTimelineSlicer() {
-            const tSlicer = document.getElementById('timelineSlicer');
-            if (!tSlicer) return;
-            
-            const usedMilestones = new Set();
-            milestonesData.forEach(i => { if (i.milestone) usedMilestones.add(i.milestone); });
-            
-            const currentTVal = tSlicer.value;
-            tSlicer.innerHTML = '<option value="">-- ' + (currentLang === 'ar' ? 'اختر المرحلة لعرض المسار' : 'Select Milestone to View Timeline') + ' --</option>';
-            
-            [...usedMilestones].sort().forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m;
-                opt.text = translateItem(m);
-                if (m === currentTVal) opt.selected = true;
-                tSlicer.appendChild(opt);
-            });
-        }
-
+        // ================= الدالة المحدثة كلياً لإنشاء المخطط الزمني =================
         window.renderTimeline = () => {
-            const slicer = document.getElementById('timelineSlicer');
             const container = document.getElementById('timelineContainer');
-            const selectedMs = slicer.value;
-
-            if (!selectedMs) {
-                container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--text-muted); font-size: 1.1rem; margin-top: 50px;">يرجى اختيار مرحلة (Milestone) لعرض المسار الزمني</div>`;
-                return;
-            }
-
-            const filteredData = milestonesData.filter(d => d.milestone === selectedMs && (d.launchDate || d.endDate));
+            // استخراج وتصفية الداتا للأصناف التي تحتوي على تاريخ
+            const filteredData = milestonesData.filter(d => d.launchDate || d.endDate);
 
             if (filteredData.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--status-delayed); font-size: 1.1rem; margin-top: 50px;">لا توجد أصناف مبرمجة لهذه المرحلة حالياً.</div>`;
+                container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--status-delayed); font-size: 1.1rem; margin-top: 50px;">لا توجد أصناف مبرمجة بتواريخ إطلاق حالياً.</div>`;
                 return;
             }
 
             const grouped = {};
             filteredData.forEach(item => {
                 const dateStr = item.launchDate || item.endDate;
+                if(!dateStr) return;
+                
                 const dateParts = dateStr.split('-');
                 if (dateParts.length >= 2) {
                     const year = dateParts[0];
                     const month = parseInt(dateParts[1], 10);
                     const quarter = Math.floor((month - 1) / 3) + 1; 
-                    
+
                     const sortKey = `${year}-Q${quarter}`; 
                     const displayLabel = `Q${quarter}-${year.substring(2)}`; 
                     
                     if (!grouped[sortKey]) {
                         grouped[sortKey] = { label: displayLabel, items: [] };
                     }
-                    grouped[sortKey].items.push(getFullProductName(item));
+                    grouped[sortKey].items.push(item);
                 }
             });
 
             const sortedKeys = Object.keys(grouped).sort();
 
+            // ألوان "خرافية" مضيئة
+            const themes = [
+                { grad: 'linear-gradient(135deg, #FF6B6B, #FF8E53)', solid: '#FF6B6B' }, // Coral
+                { grad: 'linear-gradient(135deg, #00C6FF, #0072FF)', solid: '#00C6FF' }, // Blue
+                { grad: 'linear-gradient(135deg, #43E97B, #38F9D7)', solid: '#43E97B' }, // Green
+                { grad: 'linear-gradient(135deg, #F9D423, #FF4E50)', solid: '#F9D423' }, // Yellow/Red
+                { grad: 'linear-gradient(135deg, #B12A5B, #FF8177)', solid: '#B12A5B' }, // Pink/Rose
+                { grad: 'linear-gradient(135deg, #8E2DE2, #4A00E0)', solid: '#8E2DE2' }  // Purple
+            ];
+
             let html = '<div class="timeline-wrapper"><div class="timeline-track"></div>';
             
-            sortedKeys.forEach(key => {
+            sortedKeys.forEach((key, index) => {
                 const group = grouped[key];
-                let itemsHtml = group.items.map(name => `<div class="timeline-item">${name}</div>`).join('');
+                const theme = themes[index % themes.length];
+
+                let itemsHtml = group.items.map(item => {
+                    const title = getFullProductName(item);
+                    const ms = translateItem(item.milestone);
+                    // الكرت الزجاجي مع إدخال متغيرات الألوان
+                    return `
+                        <div class="timeline-item" style="--card-theme: ${theme.grad}; --card-color: ${theme.solid};">
+                            <div class="ti-content">
+                                <div class="ti-title">${title}</div>
+                                <div class="ti-ms" style="color: ${theme.solid}; border: 1px solid ${theme.solid}50; background: ${theme.solid}15">${ms}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
                 
+                // إضافة العقدة مع التواريخ والمؤشرات
                 html += `
-                    <div class="timeline-node">
-                        <div class="timeline-point"></div>
-                        <div class="timeline-date">${group.label}</div>
+                    <div class="timeline-node" style="--node-color: ${theme.solid};">
+                        <div class="timeline-date" style="background: ${theme.grad}; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">${group.label}</div>
+                        <div class="timeline-point" style="background: ${theme.grad}; box-shadow: 0 0 20px ${theme.solid}80;"></div>
                         <div class="timeline-items">${itemsHtml}</div>
                     </div>
                 `;
