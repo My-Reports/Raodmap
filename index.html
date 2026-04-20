@@ -151,8 +151,10 @@
 
         /* Modal Overlay */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.8); z-index: 3000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-content { width: 95%; max-width: 650px; max-height: 90vh; overflow-y: auto; background: rgba(30, 41, 59, 0.95); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.6);}
+        .modal-content { width: 95%; max-width: 900px; max-height: 95vh; overflow-y: auto; background: rgba(30, 41, 59, 0.95); padding: 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px rgba(0,0,0,0.6);}
         .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+
+        .ro-data { background: rgba(0,0,0,0.3); padding: 10px 12px; border-radius: 8px; color: #94a3b8; font-size: 0.95rem; min-height: 42px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; word-break: break-word; }
 
         /* Dashboard 3D Effects */
         .dash-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;}
@@ -289,76 +291,60 @@
 
     <div id="updateModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 data-i18n="edit_title" style="color: var(--accent-blue); margin-top:0; border-bottom:1px solid #334155; padding-bottom:15px;">تحديث حالة الإنجاز (Update Status)</h3>
+            <h3 data-i18n="edit_title" style="color: var(--accent-blue); margin-top:0; border-bottom:1px solid #334155; padding-bottom:15px;">تحديث بيانات المرحلة (Update Status)</h3>
             
-            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
                 
-                <div style="padding: 15px; border: 1px dashed #334155; border-radius: 8px; display: flex; flex-direction: column; gap: 15px;">
-                    <h4 style="margin:0; color:var(--text-main); font-size:0.95rem;">بيانات الصنف الأساسية (Item Details) - <span style="color:#ef4444; font-size:0.8rem;">للقراءة فقط 🔒</span></h4>
+                <div style="padding: 20px; border: 1px dashed #334155; border-radius: 12px; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 12px;">
+                    <h4 style="margin:0 0 5px 0; color:var(--text-main); font-size:1.05rem;">البيانات المدخلة سابقاً (Read Only) 🔒</h4>
+                    <div class="form-group"><label>SKU</label><div id="roSku" class="ro-data"></div></div>
+                    <div class="form-group"><label>Brand</label><div id="roBrand" class="ro-data"></div></div>
+                    <div class="form-group"><label>Supplier</label><div id="roSupplier" class="ro-data"></div></div>
+                    <div class="form-group"><label>Milestone</label><div id="roMilestone" class="ro-data"></div></div>
+                    <div class="form-group"><label>Planned Launch</label><div id="roLaunch" class="ro-data"></div></div>
+                    <div class="form-group"><label>Notes</label><div id="roNotes" class="ro-data"></div></div>
+                </div>
+                
+                <div style="padding: 20px; border: 1px dashed #3b82f6; border-radius: 12px; background: rgba(59, 130, 246, 0.05); display: flex; flex-direction: column; gap: 12px;">
+                    <h4 style="margin:0 0 5px 0; color:#60a5fa; font-size:1.05rem;">تعديل وتحديث البيانات (Editable) ✏️</h4>
                     
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <div class="form-group">
-                            <label>رمز الوحدة (SKU)</label>
-                            <input type="text" id="editSku" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
-                        </div>
-                        <div class="form-group">
-                            <label>العلامة التجارية (Brand)</label>
-                            <input type="text" id="editBrand" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
-                        </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group"><label>تعديل SKU</label><select id="editSelectSku"></select></div>
+                        <div class="form-group"><label>تعديل Brand</label><select id="editSelectBrand"></select></div>
                     </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <div class="form-group">
-                            <label>المورد (Supplier)</label>
-                            <input type="text" id="editSupplier" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
-                        </div>
-                        <div class="form-group">
-                            <label>المرحلة (Milestone)</label>
-                            <input type="text" id="editMilestone" readonly style="background-color: rgba(0,0,0,0.5); color: #60a5fa; cursor: not-allowed; border-color: #334155; font-weight: bold;">
-                        </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group"><label>تعديل Supplier</label><select id="editSelectSupplier"></select></div>
+                        <div class="form-group"><label>تعديل Milestone</label><select id="editSelectMilestone"></select></div>
+                    </div>
+                    
+                    <div class="form-group"><label>تعديل تاريخ الإطلاق (Planned Launch)</label><input type="date" id="editPlannedLaunch"></div>
+                    <div class="form-group"><label>تعديل الملاحظات (Notes)</label><input type="text" id="editInputNotes" placeholder="..."></div>
+                    
+                    <hr style="border-color: rgba(59,130,246,0.3); margin: 10px 0; width: 100%;">
+                    
+                    <div class="form-group">
+                        <label style="color: var(--accent-blue);">حالة التنفيذ (Status Override)</label>
+                        <select id="editExecutionStatus" style="border-color: rgba(59, 130, 246, 0.5); font-weight:bold; background-color: rgba(15, 23, 42, 0.9);">
+                            <option value="Auto">🤖 احتساب تلقائي ذكي (Auto)</option>
+                            <option value="Completed">✅ مكتمل (Completed)</option>
+                            <option value="In Progress">🔄 قيد التنفيذ (In Progress)</option>
+                            <option value="Delayed">🚨 متأخر (Delayed)</option>
+                            <option value="Not Started">⏳ لم يبدأ (Not Started)</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label>تاريخ الإطلاق المخطط (Launch Date)</label>
-                        <input type="date" id="editLaunchDate" readonly style="background-color: rgba(0,0,0,0.5); color: #94a3b8; cursor: not-allowed; border-color: #334155;">
+                        <label>تاريخ الإطلاق الفعلي (Actual Launch Date)</label>
+                        <input type="date" id="editActualLaunchDate" style="border-color: rgba(59, 130, 246, 0.5);">
                     </div>
                 </div>
-                
-                <div style="padding: 15px; border: 1px dashed #3b82f6; border-radius: 8px; background: rgba(59, 130, 246, 0.05); display: flex; flex-direction: column; gap: 15px;">
-                    <h4 style="margin:0; color:#60a5fa; font-size:0.95rem;">التحديث الفعلي (Actuals Update)</h4>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <div class="form-group">
-                            <label style="color: var(--accent-blue);">حالة التنفيذ (Status Override)</label>
-                            <select id="editExecutionStatus" style="border-color: rgba(59, 130, 246, 0.5); font-weight:bold; background-color: rgba(15, 23, 42, 0.9);">
-                                <option value="Auto">🤖 احتساب تلقائي ذكي (Auto)</option>
-                                <option value="Completed">✅ مكتمل (Completed)</option>
-                                <option value="In Progress">🔄 قيد التنفيذ (In Progress)</option>
-                                <option value="Delayed">🚨 متأخر (Delayed)</option>
-                                <option value="Not Started">⏳ لم يبدأ (Not Started)</option>
-                            </select>
-                        </div>
 
-                        <div class="form-group">
-                            <label>تاريخ الإطلاق الفعلي (Actual Launch Date)</label>
-                            <input type="date" id="editActualLaunchDate" style="border-color: rgba(59, 130, 246, 0.5);">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>ملاحظات (Notes) - <span style="color:#10b981; font-size:0.8rem;">قابل للتعديل ✏️</span></label>
-                        <input type="text" id="editNotes" placeholder="أضف أو عدل الملاحظات هنا..." style="border-color: rgba(59, 130, 246, 0.5);">
-                    </div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 15px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-                * الوضع التلقائي يقوم بمقارنة تاريخ اليوم مع تاريخ الإطلاق لإعطاء حالة (متأخر) بدقة في حال تجاوز المدة.
             </div>
             
             <input type="hidden" id="editIndex">
             <div class="btn-group" style="margin-top: 25px;">
-                <button class="btn-add" onclick="saveUpdate()" data-i18n="btn_save">💾 حفظ التحديث (Save)</button>
+                <button class="btn-add" onclick="saveUpdate()" data-i18n="btn_save">💾 حفظ التعديلات (Save Changes)</button>
                 <button class="btn-clear" onclick="closeUpdateModal()" data-i18n="btn_cancel">إلغاء (Cancel)</button>
             </div>
         </div>
@@ -411,7 +397,7 @@
 
             <div id="view-maindash" class="container view-section active">
                 <div class="card chart-card" style="margin-top: 10px; overflow: hidden; min-height: 70vh; display: flex; flex-direction: column;">
-                    <h3 data-i18n="timeline_title" style="text-align: center; margin-bottom: 25px; font-size: 1.4rem; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">الجدول الزمني المجمع للأصناف (Quarterly)</h3>
+                    <h3 data-i18n="timeline_title" style="text-align: center; margin-bottom: 25px; font-size: 1.4rem; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">تاريخ الإطلاق (Launch Date)</h3>
                     
                     <div class="timeline-scroll-area">
                         <div id="timelineContainer"></div>
@@ -725,11 +711,11 @@
                 tab_maindash: "🏠 اللوحة الرئيسية", tab_tracker: "📝 الخطة (Forecast)", tab_followup: "🔄 التحديث الفعلي (Actuals)", tab_reports: "📊 لوحات القياس (Dashboards)", tab_config: "⚙️ الإعدادات (Config)", btn_logout: "🚪 العودة للبداية",
                 lbl_product: "العلامة (Brand) - اختياري", lbl_sku: "رمز الوحدة (SKU)", lbl_sku2: "المادة الفعالة (Molecules Name)", lbl_supplier: "المورد - اختياري", lbl_milestone: "المرحلة", lbl_notes: "ملاحظات",
                 lbl_launch: "تاريخ الإطلاق المخطط", lbl_actual_launch: "تاريخ الإطلاق الفعلي",
-                btn_add_forecast: "➕ إضافة لخطة التوقع", btn_export: "📊 تصدير إكسيل", btn_save: "💾 حفظ التحديث", btn_cancel: "إلغاء", btn_add_sm: "إضافة", 
+                btn_add_forecast: "➕ إضافة لخطة التوقع", btn_export: "📊 تصدير إكسيل", btn_save: "💾 حفظ التعديلات", btn_cancel: "إلغاء", btn_add_sm: "إضافة", 
                 th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_launch: "تاريخ الإطلاق", th_actual_launch: "إطلاق فعلي", th_progress: "حالة التنفيذ", th_view: "المسار", th_action: "إجراءات",
-                followup_title: "شاشة المتابعة والتحديث الفعلي", followup_desc: "تحديث التواريخ وحالة التنفيذ الأوتوماتيكية أو اليدوية.", edit_title: "تحديث حالة الإنجاز (Update Status)",
+                followup_title: "شاشة المتابعة والتحديث الفعلي", followup_desc: "تحديث التواريخ وحالة التنفيذ الأوتوماتيكية أو اليدوية.", edit_title: "تحديث بيانات المرحلة (Update Status)",
                 dash_brands: "إجمالي السجلات الموثقة", dash_miles: "المراحل المخططة", dash_completed: "المراحل المكتملة", dash_delayed: "المراحل المتأخرة", chart_status_title: "توزيع حالات الإنجاز (اضغط للتفاصيل)", chart_brand_title: "نسبة الإنجاز", chart_delayed_title: "المراحل الأكثر تأخراً (Bottlenecks)", chart_supplier_title: "توزيع الإنجاز حسب المورد",
-                timeline_title: "الجدول الزمني المجمع للأصناف (Quarterly)",
+                timeline_title: "تاريخ الإطلاق (Launch Date)",
                 conf_p_title: "العلامات التجارية Brands (A-Z)", conf_sku_title: "رموز الوحدات SKUs (A-Z)", conf_sku2_title: "المواد الفعالة Molecules Names (A-Z)", conf_supplier_title: "الموردين (A-Z)", conf_m_title: "المراحل (ترتيب مخصص)",
                 status_notstarted: "لم يبدأ ⏳", status_delayed: "متأخر 🚨", status_progress: "قيد التنفيذ 🔄", status_completed: "مكتمل ✅",
                 msg_dup_conf: "الإدخال موجود مسبقاً!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! المرحلة موجودة لنفس العلامة والـ SKU.", msg_cannot_delete: "عذراً، لا يمكن الحذف! هذه القائمة مستخدمة."
@@ -738,11 +724,11 @@
                 tab_maindash: "🏠 Main Dashboard", tab_tracker: "📝 Forecast", tab_followup: "🔄 Actuals Update", tab_reports: "📊 Dashboards", tab_config: "⚙️ Config", btn_logout: "🚪 Start Screen",
                 lbl_product: "Brand Name - Optional", lbl_sku: "SKU", lbl_sku2: "Molecules Name", lbl_supplier: "Supplier - Optional", lbl_milestone: "Milestone", lbl_notes: "Notes",
                 lbl_launch: "Launch Date", lbl_actual_launch: "Actual Launch Date",
-                btn_add_forecast: "➕ Add Forecast", btn_export: "📊 Export Excel", btn_save: "💾 Save Update", btn_cancel: "Cancel", btn_add_sm: "Add", 
+                btn_add_forecast: "➕ Add Forecast", btn_export: "📊 Export Excel", btn_save: "💾 Save Changes", btn_cancel: "Cancel", btn_add_sm: "Add", 
                 th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_launch: "Launch Date", th_actual_launch: "Actual Launch", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
                 followup_title: "Actuals vs Forecast Update", followup_desc: "Update dates and execution status here.", edit_title: "Update Progress Status",
                 dash_brands: "Total Logged Items", dash_miles: "Planned Milestones", dash_completed: "Completed Milestones", dash_delayed: "Delayed Milestones", chart_status_title: "Status Distribution (Click to Drilldown)", chart_brand_title: "Completion %", chart_delayed_title: "Most Delayed Milestones (Bottlenecks)", chart_supplier_title: "Completion Distribution by Supplier",
-                timeline_title: "Consolidated Timeline of Items (Quarterly)",
+                timeline_title: "Launch Date",
                 conf_p_title: "Brands (A-Z)", conf_sku_title: "SKUs (A-Z)", conf_sku2_title: "Molecules Names (A-z)", conf_supplier_title: "Suppliers (A-Z)", conf_m_title: "Milestones (Custom)",
                 status_notstarted: "Not Started ⏳", status_delayed: "Delayed 🚨", status_progress: "In Progress 🔄", status_completed: "Completed ✅",
                 msg_dup_conf: "Entry already exists!", msg_dup_mile: "Alert: Milestone already exists for this Brand and SKU.", msg_cannot_delete: "Sorry, cannot delete! This list is used."
@@ -826,11 +812,18 @@
         function renderConfig() {
             const selectText = currentLang === 'ar' ? 'اختر' : 'Select';
             
+            // تعبئة القوائم لشاشة الإدخال الأساسية
             fillDropdown('productName', confProducts, currentLang === 'ar' ? 'بدون علامة تجارية' : 'No Brand', true);
             fillDropdown('skuName', confSkus, selectText); 
             fillDropdown('sku2Name', confSkus2, selectText); 
             fillDropdown('supplierName', confSuppliers, selectText, true); 
             fillDropdown('milestone', confMilestones, selectText); 
+            
+            // تعبئة القوائم لشاشة التعديل (Edit Modal)
+            fillDropdown('editSelectBrand', confProducts, currentLang === 'ar' ? 'بدون علامة تجارية' : 'No Brand', true);
+            fillDropdown('editSelectSku', confSkus, selectText); 
+            fillDropdown('editSelectSupplier', confSuppliers, selectText, true); 
+            fillDropdown('editSelectMilestone', confMilestones, selectText); 
             
             const popList = (id, arr, type) => {
                 const el = document.getElementById(id); if(!el) return; el.innerHTML = '';
@@ -1070,7 +1063,7 @@
                     <td class="nowrap-col">${lDate}</td>
                     <td class="nowrap-col" style="color:#60a5fa; font-weight:bold;">${aLaunch||'--'}</td>
                     <td><span class="badge ${sInfo.class}">${sInfo.text}</span></td>
-                    <td class="nowrap-col"><button class="action-btn btn-edit" onclick="openUpdateModal(${actIdx})">✏️ تحديث</button> <button class="action-btn btn-delete" onclick="deleteRecord(${actIdx})">✖ حذف</button></td>
+                    <td class="nowrap-col"><button class="action-btn btn-edit" onclick="openUpdateModal(${actIdx})">✏️ تعديل</button> <button class="action-btn btn-delete" onclick="deleteRecord(${actIdx})">✖ حذف</button></td>
                 </tr>`;
             });
             applyFilters('dataTableTracker', 'filter-tracker'); applyFilters('dataTableFollowup', 'filter-fw');
@@ -1123,24 +1116,30 @@
         };
         window.closeTracker = () => { document.getElementById('visualTrackerCard').style.display = 'none'; };
 
-        // ================= تحديث بيانات نافذة المتابعة Modal =================
+        // ================= تحديث بيانات نافذة المتابعة Modal (تحديث كامل) =================
         window.openUpdateModal = (idx) => {
             const item = milestonesData[idx];
             document.getElementById('editIndex').value = idx;
             
-            // بيانات الصنف (Read-Only)
-            document.getElementById('editSku').value = item.skuName || '-';
-            document.getElementById('editBrand').value = item.productName ? translateItem(item.productName) : '-';
-            document.getElementById('editSupplier').value = item.supplier ? translateItem(item.supplier) : '-';
-            document.getElementById('editMilestone').value = translateItem(item.milestone||'-');
-            document.getElementById('editLaunchDate').value = item.launchDate || item.endDate || ''; 
+            // القسم الأول: البيانات الأصلية (Read-Only)
+            document.getElementById('roSku').innerText = item.skuName || '-';
+            document.getElementById('roBrand').innerText = item.productName ? translateItem(item.productName) : '-';
+            document.getElementById('roSupplier').innerText = item.supplier ? translateItem(item.supplier) : '-';
+            document.getElementById('roMilestone').innerText = translateItem(item.milestone||'-');
+            document.getElementById('roLaunch').innerText = item.launchDate || item.endDate || '-'; 
+            document.getElementById('roNotes').innerText = item.notes || '-';
             
-            // التحديث الفعلي (Editable)
+            // القسم الثاني: إعداد حقول التعديل (Editable) بالبيانات السابقة
+            document.getElementById('editSelectSku').value = item.skuName || '';
+            document.getElementById('editSelectBrand').value = item.productName || '';
+            document.getElementById('editSelectSupplier').value = item.supplier || '';
+            document.getElementById('editSelectMilestone').value = item.milestone || '';
+            document.getElementById('editPlannedLaunch').value = item.launchDate || item.endDate || '';
+            document.getElementById('editInputNotes').value = item.notes || '';
+            
+            // حقول التحديث الفعلي 
             document.getElementById('editActualLaunchDate').value = item.actualLaunchDate || item.actualEndDate || '';
             document.getElementById('editExecutionStatus').value = item.manualExecutionStatus || 'Auto';
-            
-            // حقل الملاحظات الجديد
-            document.getElementById('editNotes').value = item.notes || '';
             
             document.getElementById('updateModal').classList.add('active');
         };
@@ -1148,13 +1147,18 @@
         
         window.saveUpdate = () => {
             const idx = parseInt(document.getElementById('editIndex').value);
-            const aLaunch = document.getElementById('editActualLaunchDate').value; 
-            const manStatus = document.getElementById('editExecutionStatus').value;
-            const updatedNotes = document.getElementById('editNotes').value;
             
-            milestonesData[idx].actualLaunchDate = aLaunch;
-            milestonesData[idx].manualExecutionStatus = manStatus;
-            milestonesData[idx].notes = updatedNotes; // حفظ الملاحظات الجديدة
+            // سحب البيانات من الحقول القابلة للتعديل
+            milestonesData[idx].skuName = document.getElementById('editSelectSku').value;
+            milestonesData[idx].productName = document.getElementById('editSelectBrand').value;
+            milestonesData[idx].supplier = document.getElementById('editSelectSupplier').value;
+            milestonesData[idx].milestone = document.getElementById('editSelectMilestone').value;
+            milestonesData[idx].launchDate = document.getElementById('editPlannedLaunch').value;
+            milestonesData[idx].notes = document.getElementById('editInputNotes').value;
+            
+            // سحب البيانات الفعليّة للتنفيذ
+            milestonesData[idx].actualLaunchDate = document.getElementById('editActualLaunchDate').value;
+            milestonesData[idx].manualExecutionStatus = document.getElementById('editExecutionStatus').value;
             
             setDoc(globalDocRef, { milestonesData }, { merge: true }); 
             closeUpdateModal();
