@@ -75,7 +75,7 @@
         .sidebar-overlay.open { display: block; }
 
         /* ================= المحتوى ================= */
-        .main-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; width: 100%; -webkit-overflow-scrolling: touch;}
+        .main-content { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; width: 100%; -webkit-overflow-scrolling: touch;}
         .topbar { background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; position: sticky; top: 0; z-index: 100;}
         .menu-toggle { background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; transition: 0.2s; padding: 0;}
         .menu-toggle:hover { color: var(--accent-blue); transform: scale(1.1);}
@@ -130,7 +130,7 @@
         .btn-delete { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);}
         .btn-delete:hover { background-color: #ef4444; color: white;}
 
-        /* Visual Tracker */
+        /* Visual Tracker (Stepper) */
         #visualTrackerCard { display: none; margin-bottom: 20px; transition: all 0.5s ease; }
         .tracker-header { font-size: 1.3rem; color: var(--accent-blue); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; flex-wrap: wrap; gap: 10px;}
         .stepper { display: flex; justify-content: space-between; position: relative; width: 100%; margin-top: 20px; padding: 0 4%;}
@@ -158,11 +158,7 @@
 
         /* Dashboard 3D Effects */
         .dash-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;}
-        .stat-card { 
-            background: var(--card-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; text-align: center; 
-            border: 1px solid rgba(255,255,255,0.05); border-bottom: 4px solid var(--accent-blue); transition: 0.3s; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.15), inset 0 -4px 6px rgba(0,0,0,0.4);
-        }
+        .stat-card { background: var(--card-bg); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); border-bottom: 4px solid var(--accent-blue); transition: 0.3s; box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.15), inset 0 -4px 6px rgba(0,0,0,0.4); }
         .stat-card:hover { transform: translateY(-8px); box-shadow: 0 20px 45px rgba(0,0,0,0.7), inset 0 2px 5px rgba(255,255,255,0.2), inset 0 -4px 6px rgba(0,0,0,0.4);}
         .stat-card h4 { margin: 0; color: var(--text-muted); font-size: 0.9rem; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
         .stat-card h2 { margin: 10px 0 0 0; font-size: 2.2rem; color: white; text-shadow: 0 5px 15px rgba(0,0,0,0.7);}
@@ -172,51 +168,135 @@
         .chart-container { position: relative; height: 300px; width: 100%; display: flex; justify-content: center; margin-top: 10px;}
         .chart-container canvas { filter: drop-shadow(5px 15px 12px rgba(0,0,0,0.8)) drop-shadow(-2px -2px 4px rgba(255,255,255,0.1)); }
 
-        /* ------------------ NEW Awesome Timeline Visuals ------------------ */
-        .timeline-scroll-area { overflow-x: auto; padding-bottom: 30px; min-height: 450px; display: flex; flex-direction: column; scrollbar-width: thin; scrollbar-color: var(--accent-blue) rgba(0,0,0,0.2); }
-        .timeline-wrapper { display: flex; position: relative; min-width: 100%; padding-top: 30px; padding-bottom: 20px; align-items: flex-start; flex: 1; }
-        .timeline-track { position: absolute; top: 93px; left: 0; width: 100%; height: 8px; background: linear-gradient(90deg, #FF6B6B, #00C6FF, #43E97B, #F9D423, #8E2DE2); z-index: 1; border-radius: 10px; box-shadow: 0 0 15px rgba(255,255,255,0.2); }
-        .timeline-node { display: flex; flex-direction: column; align-items: center; width: 320px; flex-shrink: 0; z-index: 2; position: relative; }
+        /* ------------------ NEW Timeline Animations & Layout (Compact Version) ------------------ */
         
-        .timeline-date { font-weight: 800; color: #fff; padding: 10px 30px; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.4); font-size: 1.15rem; letter-spacing: 1px; margin-bottom: 15px; position: relative; z-index: 3;}
-        .timeline-date::after {
-            content:''; position:absolute; bottom:-9px; left:50%; transform:translateX(-50%);
-            border-width:6px; border-style:solid;
-            border-color: var(--node-color) transparent transparent transparent;
+        /* مؤشر نحن هنا */
+        .we-are-here-badge {
+            background: linear-gradient(90deg, #ef4444, #f59e0b);
+            color: white; padding: 4px 14px; border-radius: 20px;
+            font-weight: bold; font-size: 0.8rem; display: inline-flex;
+            align-items: center; gap: 6px; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+            margin: 0; animation: pulseAlert 2s infinite;
         }
-        
-        .timeline-point { width: 36px; height: 36px; border-radius: 50%; z-index: 3; border: 4px solid #fff; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .timeline-node:hover .timeline-point { transform: scale(1.3); }
-        
-        .timeline-items { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; width: 95%; }
-        
-        .timeline-item {
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 12px;
-            padding: 18px 15px;
-            text-align: right;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-            overflow: hidden;
-            border-right: 4px solid var(--card-color);
+
+        /* الخط الأفقي للملاحة (أصغر وأكثر إحكاماً) */
+        .h-timeline-nav {
+            display: flex; align-items: center; justify-content: flex-start;
+            overflow-x: auto; padding: 5px 10px 10px; margin-bottom: 0;
+            scrollbar-width: thin; scroll-behavior: smooth; gap: 10px;
         }
-        html[dir="ltr"] .timeline-item { text-align: left; border-right: none; border-left: 4px solid var(--card-color); }
-        
-        .timeline-item::before {
-            content: ''; position: absolute; top: 0; right: 0; width: 0%; height: 100%;
-            background: var(--card-theme);
-            transition: 0.4s ease; opacity: 0; z-index: 0;
+        .h-nav-wrapper { position: relative; flex: 0 0 auto; min-width: 80px; display: flex; justify-content: center; }
+        .h-nav-item {
+            display: flex; flex-direction: column; align-items: center; position: relative;
+            cursor: pointer; transition: transform 0.3s; z-index: 2; padding: 0 5px;
         }
-        html[dir="ltr"] .timeline-item::before { right: auto; left: 0; }
+        .h-nav-item:hover { transform: translateY(-3px); }
+        .h-nav-dot {
+            width: 32px; height: 32px; border-radius: 50%; display: flex;
+            justify-content: center; align-items: center; font-weight: bold; font-size: 0.8rem;
+            color: white; box-shadow: 0 5px 10px rgba(0,0,0,0.5); margin-bottom: 5px;
+            border: 2px solid rgba(255,255,255,0.2); transition: 0.3s;
+        }
+        .h-nav-item:hover .h-nav-dot { transform: scale(1.1); box-shadow: 0 8px 20px rgba(0,0,0,0.7); }
+        .h-nav-label { font-size: 0.75rem; font-weight: bold; color: var(--text-main); white-space: nowrap; }
+        .h-nav-count { font-size: 0.65rem; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 12px; margin-top: 4px; white-space: nowrap; border: 1px solid rgba(255,255,255,0.05); }
+        .h-nav-line {
+            position: absolute; top: 15px; width: 100%; height: 2px;
+            background: rgba(255,255,255,0.1); z-index: 1;
+        }
+        html[dir="rtl"] .h-nav-line { right: 50%; }
+        html[dir="ltr"] .h-nav-line { left: 50%; }
+
+        /* تأثير الفلاش عند الضغط */
+        @keyframes flashNode {
+            0%   { box-shadow: 0 0 0px 0px rgba(6, 182, 212, 0); background: rgba(30, 41, 59, 0.6); transform: scale(1); }
+            15%  { box-shadow: 0 0 40px 10px rgba(6, 182, 212, 0.8); background: rgba(6, 182, 212, 0.25); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0px 0px rgba(6, 182, 212, 0); background: rgba(30, 41, 59, 0.6); transform: scale(1); }
+        }
+        .flash-target {
+            animation: flashNode 1.5s ease-out;
+            border-color: var(--accent-blue) !important;
+        }
+
+        /* الخط الزمني العمودي */
+        .v-timeline-container { 
+            position: relative; padding: 10px 0 40px; width: 100%;
+            max-width: 1000px; margin: 0 auto;
+        }
+        html[dir="rtl"] .v-timeline-container { padding-right: 40px; }
+        html[dir="ltr"] .v-timeline-container { padding-left: 40px; }
         
-        .timeline-item:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.6); border-color: var(--card-color);}
-        .timeline-item:hover::before { width: 100%; opacity: 0.15; }
+        .v-timeline-container::before {
+            content: ''; position: absolute; top: 0; bottom: 0; width: 4px;
+            background: linear-gradient(to bottom, #06b6d4, #3b82f6, #8b5cf6);
+            border-radius: 4px; box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
+        }
+        html[dir="rtl"] .v-timeline-container::before { right: 18px; }
+        html[dir="ltr"] .v-timeline-container::before { left: 18px; }
+
+        .v-node { position: relative; margin-bottom: 30px; width: 100%; }
         
-        .ti-content { position: relative; z-index: 1; }
-        .ti-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; color: #f8fafc; line-height: 1.4;}
-        .ti-ms { font-size: 0.8rem; font-weight: 700; padding: 5px 10px; border-radius: 6px; display: inline-block; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        .v-node-dot {
+            position: absolute; top: 15px; width: 22px; height: 22px;
+            border-radius: 50%; background: var(--card-bg);
+            border: 4px solid var(--node-color, var(--accent-blue));
+            z-index: 2; box-shadow: 0 0 15px var(--node-color, var(--accent-blue));
+            transition: 0.3s;
+        }
+        html[dir="rtl"] .v-node-dot { right: -31px; }
+        html[dir="ltr"] .v-node-dot { left: -31px; }
+
+        .v-node-content {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: all 0.3s ease;
+        }
+        .v-node-content:hover { box-shadow: 0 15px 40px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.1); }
+        .v-node-content:hover .v-node-dot { transform: scale(1.2); }
+
+        .v-node-header {
+            padding: 12px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            border-radius: 16px; background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+            transition: background 0.3s;
+        }
+        .v-node-header:hover { background: rgba(255,255,255,0.05); }
+
+        .q-badge-wrapper { perspective: 1000px; }
+        .q-badge {
+            transform: skew(-15deg);
+            background: linear-gradient(135deg, var(--node-color, #06b6d4), #2563eb);
+            padding: 4px 18px; border-radius: 6px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.4), inset 2px 2px 5px rgba(255,255,255,0.2);
+            display: inline-block; border-left: 3px solid rgba(255,255,255,0.5);
+        }
+        html[dir="ltr"] .q-badge { transform: skew(15deg); border-left: none; border-right: 3px solid rgba(255,255,255,0.5); }
+        .q-text {
+            display: inline-block; transform: skew(15deg);
+            font-weight: 900; font-style: italic; font-size: 1rem; color: #fff; letter-spacing: 1px;
+        }
+        html[dir="ltr"] .q-text { transform: skew(-15deg); }
+
+        .v-node-summary { color: var(--text-muted); font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 15px; }
+        .toggle-icon { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); font-size: 1.1rem; color: var(--accent-blue); }
+
+        .v-node-body {
+            display: none; padding: 15px; border-top: 1px solid rgba(255,255,255,0.05);
+            background: rgba(15, 23, 42, 0.4); border-radius: 0 0 16px 16px;
+        }
+        .v-node-body.open { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; animation: fadeInDown 0.4s ease; }
+
+        /* الكروت الداخلية (خطوط ومسافات مصغرة) */
+        .v-item-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 8px; padding: 10px 12px;
+            border-right: 4px solid var(--node-color, #06b6d4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        html[dir="ltr"] .v-item-card { border-right: none; border-left: 4px solid var(--node-color, #06b6d4); }
+        .v-item-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); background: rgba(30, 41, 59, 0.9); }
+        .v-item-title { font-weight: bold; font-size: 0.85rem; margin-bottom: 5px; color: #f8fafc; line-height: 1.3;}
+        .v-item-ms { font-size: 0.7rem; color: var(--text-muted); display: inline-block; padding: 3px 6px; background: rgba(0,0,0,0.3); border-radius: 4px; font-weight: bold;}
 
         /* Config Layout - Grouping */
         .config-page-layout { display: grid; grid-template-columns: 1fr; gap: 30px; align-items: start; }
@@ -396,12 +476,20 @@
             </header>
 
             <div id="view-maindash" class="container view-section active">
-                <div class="card chart-card" style="margin-top: 10px; overflow: hidden; min-height: 70vh; display: flex; flex-direction: column;">
-                    <h3 data-i18n="timeline_title" style="text-align: center; margin-bottom: 25px; font-size: 1.4rem; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">تاريخ الإطلاق (Launch Date)</h3>
+                <div class="card chart-card" style="margin-top: 10px; height: calc(100vh - 110px); min-height: 600px; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
                     
-                    <div class="timeline-scroll-area">
-                        <div id="timelineContainer"></div>
+                    <div style="background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(15px); padding: 15px 25px 5px 25px; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 25px rgba(0,0,0,0.4); flex-shrink: 0;">
+                        <div id="timelineHeaderFlex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+                            <h3 data-i18n="timeline_title" style="margin: 0; font-size: 1.25rem; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">الجدول الزمني للإطلاق (Timeline)</h3>
+                            <div id="weAreHereContainer"></div>
+                        </div>
+                        <div id="timelineHeader"></div>
                     </div>
+
+                    <div id="timelineScrollArea" style="flex: 1; overflow-y: auto; padding: 25px; scrollbar-width: thin; scroll-behavior: smooth;">
+                        <div id="timelineBody"></div>
+                    </div>
+
                 </div>
             </div>
 
@@ -715,7 +803,7 @@
                 th_product: "العلامة", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "المورد", th_notes: "ملاحظات", th_milestone: "المرحلة", th_launch: "تاريخ الإطلاق", th_actual_launch: "إطلاق فعلي", th_progress: "حالة التنفيذ", th_view: "المسار", th_action: "إجراءات",
                 followup_title: "شاشة المتابعة والتحديث الفعلي", followup_desc: "تحديث التواريخ وحالة التنفيذ الأوتوماتيكية أو اليدوية.", edit_title: "تحديث بيانات المرحلة (Update Status)",
                 dash_brands: "إجمالي السجلات الموثقة", dash_miles: "المراحل المخططة", dash_completed: "المراحل المكتملة", dash_delayed: "المراحل المتأخرة", chart_status_title: "توزيع حالات الإنجاز (اضغط للتفاصيل)", chart_brand_title: "نسبة الإنجاز", chart_delayed_title: "المراحل الأكثر تأخراً (Bottlenecks)", chart_supplier_title: "توزيع الإنجاز حسب المورد",
-                timeline_title: "تاريخ الإطلاق (Launch Date)",
+                timeline_title: "الجدول الزمني للإطلاق (Timeline)",
                 conf_p_title: "العلامات التجارية Brands (A-Z)", conf_sku_title: "رموز الوحدات SKUs (A-Z)", conf_sku2_title: "المواد الفعالة Molecules Names (A-Z)", conf_supplier_title: "الموردين (A-Z)", conf_m_title: "المراحل (ترتيب مخصص)",
                 status_notstarted: "لم يبدأ ⏳", status_delayed: "متأخر 🚨", status_progress: "قيد التنفيذ 🔄", status_completed: "مكتمل ✅",
                 msg_dup_conf: "الإدخال موجود مسبقاً!", msg_dup_mile: "تنبيه: لا يمكن الإضافة! المرحلة موجودة لنفس العلامة والـ SKU.", msg_cannot_delete: "عذراً، لا يمكن الحذف! هذه القائمة مستخدمة."
@@ -728,7 +816,7 @@
                 th_product: "Brand", th_sku: "SKU", th_sku2: "Molecules Name", th_supplier: "Supplier", th_notes: "Notes", th_milestone: "Milestone", th_launch: "Launch Date", th_actual_launch: "Actual Launch", th_progress: "Execution Status", th_view: "Track", th_action: "Actions",
                 followup_title: "Actuals vs Forecast Update", followup_desc: "Update dates and execution status here.", edit_title: "Update Progress Status",
                 dash_brands: "Total Logged Items", dash_miles: "Planned Milestones", dash_completed: "Completed Milestones", dash_delayed: "Delayed Milestones", chart_status_title: "Status Distribution (Click to Drilldown)", chart_brand_title: "Completion %", chart_delayed_title: "Most Delayed Milestones (Bottlenecks)", chart_supplier_title: "Completion Distribution by Supplier",
-                timeline_title: "Launch Date",
+                timeline_title: "Launch Timeline",
                 conf_p_title: "Brands (A-Z)", conf_sku_title: "SKUs (A-Z)", conf_sku2_title: "Molecules Names (A-z)", conf_supplier_title: "Suppliers (A-Z)", conf_m_title: "Milestones (Custom)",
                 status_notstarted: "Not Started ⏳", status_delayed: "Delayed 🚨", status_progress: "In Progress 🔄", status_completed: "Completed ✅",
                 msg_dup_conf: "Entry already exists!", msg_dup_mile: "Alert: Milestone already exists for this Brand and SKU.", msg_cannot_delete: "Sorry, cannot delete! This list is used."
@@ -812,14 +900,12 @@
         function renderConfig() {
             const selectText = currentLang === 'ar' ? 'اختر' : 'Select';
             
-            // تعبئة القوائم لشاشة الإدخال الأساسية
             fillDropdown('productName', confProducts, currentLang === 'ar' ? 'بدون علامة تجارية' : 'No Brand', true);
             fillDropdown('skuName', confSkus, selectText); 
             fillDropdown('sku2Name', confSkus2, selectText); 
             fillDropdown('supplierName', confSuppliers, selectText, true); 
             fillDropdown('milestone', confMilestones, selectText); 
             
-            // تعبئة القوائم لشاشة التعديل (Edit Modal)
             fillDropdown('editSelectBrand', confProducts, currentLang === 'ar' ? 'بدون علامة تجارية' : 'No Brand', true);
             fillDropdown('editSelectSku', confSkus, selectText); 
             fillDropdown('editSelectSupplier', confSuppliers, selectText, true); 
@@ -1116,12 +1202,10 @@
         };
         window.closeTracker = () => { document.getElementById('visualTrackerCard').style.display = 'none'; };
 
-        // ================= تحديث بيانات نافذة المتابعة Modal (تحديث كامل) =================
         window.openUpdateModal = (idx) => {
             const item = milestonesData[idx];
             document.getElementById('editIndex').value = idx;
             
-            // القسم الأول: البيانات الأصلية (Read-Only)
             document.getElementById('roSku').innerText = item.skuName || '-';
             document.getElementById('roBrand').innerText = item.productName ? translateItem(item.productName) : '-';
             document.getElementById('roSupplier').innerText = item.supplier ? translateItem(item.supplier) : '-';
@@ -1129,7 +1213,6 @@
             document.getElementById('roLaunch').innerText = item.launchDate || item.endDate || '-'; 
             document.getElementById('roNotes').innerText = item.notes || '-';
             
-            // القسم الثاني: إعداد حقول التعديل (Editable) بالبيانات السابقة
             document.getElementById('editSelectSku').value = item.skuName || '';
             document.getElementById('editSelectBrand').value = item.productName || '';
             document.getElementById('editSelectSupplier').value = item.supplier || '';
@@ -1137,7 +1220,6 @@
             document.getElementById('editPlannedLaunch').value = item.launchDate || item.endDate || '';
             document.getElementById('editInputNotes').value = item.notes || '';
             
-            // حقول التحديث الفعلي 
             document.getElementById('editActualLaunchDate').value = item.actualLaunchDate || item.actualEndDate || '';
             document.getElementById('editExecutionStatus').value = item.manualExecutionStatus || 'Auto';
             
@@ -1148,7 +1230,6 @@
         window.saveUpdate = () => {
             const idx = parseInt(document.getElementById('editIndex').value);
             
-            // سحب البيانات من الحقول القابلة للتعديل
             milestonesData[idx].skuName = document.getElementById('editSelectSku').value;
             milestonesData[idx].productName = document.getElementById('editSelectBrand').value;
             milestonesData[idx].supplier = document.getElementById('editSelectSupplier').value;
@@ -1156,7 +1237,6 @@
             milestonesData[idx].launchDate = document.getElementById('editPlannedLaunch').value;
             milestonesData[idx].notes = document.getElementById('editInputNotes').value;
             
-            // سحب البيانات الفعليّة للتنفيذ
             milestonesData[idx].actualLaunchDate = document.getElementById('editActualLaunchDate').value;
             milestonesData[idx].manualExecutionStatus = document.getElementById('editExecutionStatus').value;
             
@@ -1223,12 +1303,67 @@
             });
         }
 
+        // للفتح والإغلاق اليدوي (يسمح بفتح عدة قوائم إذا تم الضغط مباشرة على الهيدر بالأسفل)
+        window.toggleQuarter = (el) => {
+            const body = el.nextElementSibling;
+            const icon = el.querySelector('.toggle-icon');
+            if (body.classList.contains('open')) {
+                body.classList.remove('open');
+                icon.style.transform = 'rotate(0deg)';
+                setTimeout(() => { body.style.display = 'none'; }, 200);
+            } else {
+                body.style.display = 'grid';
+                setTimeout(() => { body.classList.add('open'); }, 10);
+                icon.style.transform = 'rotate(180deg)';
+            }
+        };
+
+        // دالة الضغط على المسار الزمني الأفقي للانتقال للعمودي مع الإضاءة والإغلاق التلقائي للبقية
+        window.scrollToQuarter = (key) => {
+            const scrollArea = document.getElementById('timelineScrollArea');
+            const targetNode = document.getElementById(`v-node-${key}`);
+            
+            if (targetNode && scrollArea) {
+                // 1. إغلاق جميع القوائم المفتوحة حالياً (ما عدا الهدف)
+                document.querySelectorAll('.v-node-body.open').forEach(body => {
+                    if(body.parentElement.parentElement.id !== `v-node-${key}`) {
+                        body.classList.remove('open');
+                        body.style.display = 'none';
+                        const icon = body.parentElement.querySelector('.toggle-icon');
+                        if(icon) icon.style.transform = 'rotate(0deg)';
+                    }
+                });
+
+                // 2. النزول السلس للعنصر
+                targetNode.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                const contentBox = targetNode.querySelector('.v-node-content');
+                
+                // 3. إعادة تفعيل تأثير الوميض (Flash)
+                contentBox.classList.remove('flash-target');
+                void contentBox.offsetWidth; // Trigger reflow
+                contentBox.classList.add('flash-target');
+                
+                // 4. فتح القائمة المطلوبة تلقائياً إذا كانت مغلقة
+                const body = contentBox.querySelector('.v-node-body');
+                const icon = contentBox.querySelector('.toggle-icon');
+                if (!body.classList.contains('open')) {
+                    body.style.display = 'grid';
+                    setTimeout(() => { body.classList.add('open'); }, 10);
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            }
+        };
+
         window.renderTimeline = () => {
-            const container = document.getElementById('timelineContainer');
+            const headerContainer = document.getElementById('timelineHeader');
+            const bodyContainer = document.getElementById('timelineBody');
+            
             const filteredData = milestonesData.filter(d => d.launchDate || d.endDate);
 
             if (filteredData.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--status-delayed); font-size: 1.1rem; margin-top: 50px;">لا توجد أصناف مبرمجة بتواريخ إطلاق حالياً.</div>`;
+                headerContainer.innerHTML = '';
+                bodyContainer.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--status-delayed); font-size: 1.1rem; margin-top: 50px;">لا توجد أصناف مبرمجة بتواريخ إطلاق حالياً.</div>`;
                 return;
             }
 
@@ -1254,46 +1389,84 @@
             });
 
             const sortedKeys = Object.keys(grouped).sort();
+            const themes = ['#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
-            const themes = [
-                { grad: 'linear-gradient(135deg, #FF6B6B, #FF8E53)', solid: '#FF6B6B' }, 
-                { grad: 'linear-gradient(135deg, #00C6FF, #0072FF)', solid: '#00C6FF' }, 
-                { grad: 'linear-gradient(135deg, #43E97B, #38F9D7)', solid: '#43E97B' }, 
-                { grad: 'linear-gradient(135deg, #F9D423, #FF4E50)', solid: '#F9D423' }, 
-                { grad: 'linear-gradient(135deg, #B12A5B, #FF8177)', solid: '#B12A5B' }, 
-                { grad: 'linear-gradient(135deg, #8E2DE2, #4A00E0)', solid: '#8E2DE2' }  
-            ];
+            // === إنشاء مؤشر "نحن هنا" (بناء على تاريخ النظام الحالي) ===
+            const now = new Date();
+            const currYear = now.getFullYear();
+            const currQuarter = Math.floor(now.getMonth() / 3) + 1;
+            const currentLabel = `Q${currQuarter}-${String(currYear).substring(2)}`;
+            const weAreHereText = currentLang === 'ar' ? `📍 نحن هنا الآن: ${currentLabel}` : `📍 We are here: ${currentLabel}`;
+            
+            // سيتم حقنه في الجزء العلوي بجانب العنوان
+            document.getElementById('weAreHereContainer').innerHTML = `<div class="we-are-here-badge">${weAreHereText}</div>`;
 
-            let html = '<div class="timeline-wrapper"><div class="timeline-track"></div>';
+            // === إنشاء الخط الأفقي (Horizontal Navigation Timeline) ===
+            let hTimelineHtml = `<div class="h-timeline-nav">`;
+            sortedKeys.forEach((key, index) => {
+                const group = grouped[key];
+                const themeColor = themes[index % themes.length];
+                const isLast = index === sortedKeys.length - 1;
+                
+                hTimelineHtml += `
+                    <div class="h-nav-wrapper">
+                        ${!isLast ? `<div class="h-nav-line"></div>` : ''}
+                        <div class="h-nav-item" onclick="scrollToQuarter('${key}')">
+                            <div class="h-nav-dot" style="background: ${themeColor}">${group.label.split('-')[0]}</div>
+                            <div class="h-nav-label">${group.label}</div>
+                            <div class="h-nav-count">${group.items.length} ${currentLang === 'ar' ? 'عنصر' : 'Items'}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            hTimelineHtml += `</div>`;
+
+            // === إنشاء الخط العمودي (Vertical Accordion Timeline) ===
+            let vTimelineHtml = `<div class="v-timeline-container">`;
             
             sortedKeys.forEach((key, index) => {
                 const group = grouped[key];
-                const theme = themes[index % themes.length];
-
+                const themeColor = themes[index % themes.length];
+                
                 let itemsHtml = group.items.map(item => {
                     const title = getFullProductName(item);
                     const ms = translateItem(item.milestone);
                     return `
-                        <div class="timeline-item" style="--card-theme: ${theme.grad}; --card-color: ${theme.solid};">
-                            <div class="ti-content">
-                                <div class="ti-title">${title}</div>
-                                <div class="ti-ms" style="color: ${theme.solid}; border: 1px solid ${theme.solid}50; background: ${theme.solid}15">${ms}</div>
-                            </div>
+                        <div class="v-item-card" style="--node-color: ${themeColor}">
+                            <div class="v-item-title">${title}</div>
+                            <div class="v-item-ms">${ms}</div>
                         </div>
                     `;
                 }).join('');
                 
-                html += `
-                    <div class="timeline-node" style="--node-color: ${theme.solid};">
-                        <div class="timeline-date" style="background: ${theme.grad}; text-shadow: 0 2px 4px rgba(0,0,0,0.4);">${group.label}</div>
-                        <div class="timeline-point" style="background: ${theme.grad}; box-shadow: 0 0 20px ${theme.solid}80;"></div>
-                        <div class="timeline-items">${itemsHtml}</div>
+                // تم إعطاء ID لربط الخط الأفقي بالعمودي
+                vTimelineHtml += `
+                    <div class="v-node" id="v-node-${key}" style="--node-color: ${themeColor}">
+                        <div class="v-node-dot"></div>
+                        <div class="v-node-content">
+                            <div class="v-node-header" onclick="toggleQuarter(this)">
+                                <div class="q-badge-wrapper">
+                                    <div class="q-badge">
+                                        <span class="q-text">${group.label}</span>
+                                    </div>
+                                </div>
+                                <div class="v-node-summary">
+                                    <span>${group.items.length} ${currentLang === 'ar' ? 'عناصر' : 'Items'}</span>
+                                    <span class="toggle-icon">▼</span>
+                                </div>
+                            </div>
+                            <div class="v-node-body">
+                                ${itemsHtml}
+                            </div>
+                        </div>
                     </div>
                 `;
             });
-            
-            html += '</div>';
-            container.innerHTML = html;
+            vTimelineHtml += `</div>`;
+
+            // إدراج المكونات
+            headerContainer.innerHTML = hTimelineHtml;
+            bodyContainer.innerHTML = vTimelineHtml;
         };
 
         function renderDashboards() {
