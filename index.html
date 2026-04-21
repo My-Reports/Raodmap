@@ -76,7 +76,7 @@
 
         /* ================= المحتوى ================= */
         .main-content { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; width: 100%; -webkit-overflow-scrolling: touch;}
-        .topbar { background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px; position: sticky; top: 0; z-index: 100;}
+        .topbar { background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 5px; position: sticky; top: 0; z-index: 100;}
         .menu-toggle { background: transparent; border: none; color: white; font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; transition: 0.2s; padding: 0;}
         .menu-toggle:hover { color: var(--accent-blue); transform: scale(1.1);}
         .topbar-left { display: flex; align-items: center; gap: 15px; }
@@ -285,13 +285,14 @@
         }
         .v-node-body.open { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; animation: fadeInDown 0.4s ease; }
 
-        /* الكروت الداخلية (خطوط ومسافات مصغرة) */
+        /* الكروت الداخلية قابلة للنقر */
         .v-item-card {
             background: rgba(15, 23, 42, 0.8);
             border-radius: 8px; padding: 10px 12px;
             border-right: 4px solid var(--node-color, #06b6d4);
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: 0.3s; position: relative; overflow: hidden;
+            cursor: pointer; /* مؤشر النقر */
         }
         html[dir="ltr"] .v-item-card { border-right: none; border-left: 4px solid var(--node-color, #06b6d4); }
         .v-item-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); background: rgba(30, 41, 59, 0.9); }
@@ -348,6 +349,14 @@
     </style>
 </head>
 <body>
+
+    <div id="noteModal" class="modal-overlay" onclick="closeNotePopup()">
+        <div class="modal-content" style="max-width: 400px; text-align: center; cursor: pointer; background: rgba(15, 23, 42, 0.98); border: 2px solid var(--accent-blue); box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4);">
+            <h3 style="color: var(--accent-blue); margin-top: 0; margin-bottom: 20px; font-size: 1.5rem;">ملاحظات (Notes)</h3>
+            <p id="noteModalText" style="font-size: 1.1rem; line-height: 1.6; color: var(--text-main); word-wrap: break-word;"></p>
+            <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 25px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">(اضغط في أي مكان للإغلاق)</span>
+        </div>
+    </div>
 
     <div id="confirmModal" class="modal-overlay">
         <div class="modal-content">
@@ -475,11 +484,11 @@
                 </div>
             </header>
 
-            <div id="view-maindash" class="container view-section active">
-                <div class="card chart-card" style="margin-top: 10px; height: calc(100vh - 110px); min-height: 600px; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+            <div id="view-maindash" class="container view-section active" style="padding-top: 0;">
+                <div class="card chart-card" style="margin-top: 0px; height: calc(100vh - 80px); min-height: 600px; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
                     
-                    <div style="background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(15px); padding: 15px 25px 5px 25px; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 25px rgba(0,0,0,0.4); flex-shrink: 0;">
-                        <div id="timelineHeaderFlex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+                    <div style="background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(15px); padding: 10px 20px 0px 20px; z-index: 10; border-bottom: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 25px rgba(0,0,0,0.4); flex-shrink: 0; position: sticky; top: 0;">
+                        <div id="timelineHeaderFlex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-wrap: wrap; gap: 10px;">
                             <h3 data-i18n="timeline_title" style="margin: 0; font-size: 1.25rem; color: var(--accent-blue); text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);">الجدول الزمني للإطلاق (Timeline)</h3>
                             <div id="weAreHereContainer"></div>
                         </div>
@@ -742,6 +751,22 @@
 
         const coreListsMap = { 'products': 'conf_p_title', 'skus': 'conf_sku_title', 'skus2': 'conf_sku2_title', 'suppliers': 'conf_supplier_title', 'milestones': 'conf_m_title' };
         const corePropsMap = { 'products': 'productName', 'skus': 'skuName', 'skus2': 'sku2Name', 'suppliers': 'supplier', 'milestones': 'milestone' };
+
+        // ================= دوال الملاحظات (Popup Notes) =================
+        window.showNotePopup = (encodedNote) => {
+            const decodedNote = decodeURIComponent(encodedNote);
+            const textToDisplay = decodedNote && decodedNote.trim() !== '' 
+                ? decodedNote 
+                : (currentLang === 'ar' ? 'لا توجد ملاحظات (No comment)' : 'No comment');
+            
+            document.getElementById('noteModalText').innerText = textToDisplay;
+            document.getElementById('noteModal').classList.add('active');
+        };
+
+        window.closeNotePopup = () => {
+            document.getElementById('noteModal').classList.remove('active');
+        };
+        // ================================================================
 
         function sortArray(arr) { 
             if (!arr) return [];
@@ -1431,8 +1456,11 @@
                 let itemsHtml = group.items.map(item => {
                     const title = getFullProductName(item);
                     const ms = translateItem(item.milestone);
+                    // معالجة الملاحظات بأمان تام لتمريرها في onClick
+                    const safeNote = encodeURIComponent(item.notes || '');
+
                     return `
-                        <div class="v-item-card" style="--node-color: ${themeColor}">
+                        <div class="v-item-card" style="--node-color: ${themeColor}" onclick="showNotePopup('${safeNote}')">
                             <div class="v-item-title">${title}</div>
                             <div class="v-item-ms">${ms}</div>
                         </div>
